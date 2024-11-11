@@ -111,7 +111,10 @@ fun LandingScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(onClick = onRegisterClick) {
-            Text(text = "Don’t have an account? Register")
+            Text(
+                text = "Don’t have an account? Register",
+                color = Color.Black
+            )
         }
     }
 }
