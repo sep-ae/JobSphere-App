@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class AuthViewModel : ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     private val _authState = MutableLiveData<AuthState>()
     val authState: LiveData<AuthState> = _authState
@@ -18,19 +18,31 @@ class AuthViewModel : ViewModel() {
     }
 
     fun checkAuthStatus() {
-        _authState.value = if (auth.currentUser == null) {
-            AuthState.Unauthenticated
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            _authState.value = AuthState.Unauthenticated
         } else {
-            AuthState.Authenticated
+            fetchUserData(currentUser.uid)
         }
     }
 
-    // Fungsi validasi password minimal 8 karakter
+    private fun fetchUserData(userId: String) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                val username = document.getString("username") ?: "User"
+                val role = document.getString("role") ?: "user"
+                _authState.value = AuthState.Authenticated(username, role)
+            }
+            .addOnFailureListener {
+                _authState.value = AuthState.Error("Failed to retrieve user data.")
+            }
+    }
+
+
     private fun isPasswordValid(password: String): Boolean {
         return password.length >= 8
     }
 
-    // Fungsi untuk cek apakah email sudah terdaftar
     private fun checkIfEmailExists(email: String, onComplete: (Boolean) -> Unit) {
         auth.fetchSignInMethodsForEmail(email)
             .addOnCompleteListener { task ->
@@ -38,7 +50,6 @@ class AuthViewModel : ViewModel() {
                     val isEmailUsed = task.result?.signInMethods?.isNotEmpty() == true
                     onComplete(isEmailUsed)
                 } else {
-                    // Jika terjadi kesalahan saat pengecekan
                     onComplete(false)
                 }
             }
@@ -54,27 +65,26 @@ class AuthViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _authState.value = AuthState.Authenticated
+                    auth.currentUser?.let { user ->
+                        fetchUserData(user.uid)
+                    }
                 } else {
                     _authState.value = AuthState.Error(task.exception?.message ?: "An error occurred. Please try again.")
                 }
             }
     }
 
-    // fungsi login
     fun signup(email: String, password: String, role: String, username: String) {
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             _authState.value = AuthState.Error("Email, Password, and Username can't be empty")
             return
         }
 
-        // Validasi password
         if (!isPasswordValid(password)) {
             _authState.value = AuthState.Error("Password must be at least 8 characters long")
             return
         }
 
-        // Cek apakah email sudah terdaftar
         checkIfEmailExists(email) { isEmailUsed ->
             if (isEmailUsed) {
                 _authState.value = AuthState.Error("Email is already in use")
@@ -90,18 +100,15 @@ class AuthViewModel : ViewModel() {
                                 "username" to username
                             )
 
-                            // menambhkan data ke tabel users
-                            FirebaseFirestore.getInstance().collection("users")
-                                .document(userId)
+                            db.collection("users").document(userId)
                                 .set(userMap)
                                 .addOnCompleteListener { firestoreTask ->
                                     if (firestoreTask.isSuccessful) {
-                                        _authState.value = AuthState.Authenticated
+                                        _authState.value = AuthState.Authenticated(username, role)
                                     } else {
                                         _authState.value = AuthState.Error("Failed to store user data.")
                                     }
                                 }
-
                         } else {
                             _authState.value = AuthState.Error(task.exception?.message ?: "An error occurred. Please try again.")
                         }
@@ -110,7 +117,6 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    // Fungsi Logout
     fun signout() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
@@ -118,7 +124,7 @@ class AuthViewModel : ViewModel() {
 }
 
 sealed class AuthState {
-    object Authenticated : AuthState()
+    data class Authenticated(val username: String, val role: String) : AuthState()
     object Unauthenticated : AuthState()
     object Loading : AuthState()
     data class Error(val message: String) : AuthState()

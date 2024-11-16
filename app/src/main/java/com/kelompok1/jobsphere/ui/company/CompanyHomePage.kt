@@ -1,21 +1,8 @@
 package com.kelompok1.jobsphere.ui.company
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Divider
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
@@ -26,14 +13,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.kelompok1.jobsphere.ui.components.BottomNavigationBar
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun CompanyHomeContent() {
+fun CompanyHomeContent(
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Header Section
         Text(
             text = "Hire with Precision",
             fontSize = 24.sp,
@@ -47,6 +42,7 @@ fun CompanyHomeContent() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Search Field Section
         OutlinedTextField(
             value = "",
             onValueChange = {},
@@ -60,11 +56,11 @@ fun CompanyHomeContent() {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
         Divider()
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        Text(text = "Latest Job Openings", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,9 +71,9 @@ fun CompanyHomeContent() {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
         Divider()
 
+        Text(text = "Jobs from Last Week", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,8 +83,11 @@ fun CompanyHomeContent() {
             repeat(3) { JobItemPlaceholder() }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Floating Action Button
         FloatingActionButton(
-            onClick = { /* Add action */ },
+            onClick = { /* Add Job Action */ },
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(16.dp),
@@ -97,6 +96,8 @@ fun CompanyHomeContent() {
             Icon(Icons.Default.Add, contentDescription = "Add Job", tint = Color.White)
         }
     }
+    // Bottom Navigation Bar
+    BottomNavigationBar(navController = navController, drawerState = drawerState, scope = scope)
 }
 
 @Composable

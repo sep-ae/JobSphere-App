@@ -8,11 +8,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +29,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.kelompok1.jobsphere.R
 import com.kelompok1.jobsphere.ViewModel.AuthViewModel
+import com.kelompok1.jobsphere.ui.company.CompanyHomeContent
+import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomeContent
 import com.kelompok1.jobsphere.ui.theme.JobSphereTheme
 import com.kelompok1.jobsphere.ui.theme.RighteousFamily
 
@@ -55,10 +60,42 @@ fun AppNavigation(navController: NavHostController, authViewModel: AuthViewModel
             )
         }
         composable("home") { HomePage() }
-        composable("login") { LoginPage(navController = navController, authViewModel = authViewModel) }
-        composable("register") { RegisterPage(navController = navController, authViewModel = authViewModel) }
+        composable("login") {
+            LoginPage(
+                navController = navController,
+                authViewModel = authViewModel
+            )
+        }
+        composable("register") {
+            RegisterPage(
+                navController = navController,
+                authViewModel = authViewModel
+            )
+        }
+        composable("JobSeekerHome/{username}") { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: "Job Seeker"
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+            JobSeekerHomeContent(
+                username = username,
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+            )
+        }
+        composable("CompanyHome/{username}") { backStackEntry ->
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
+
+            CompanyHomeContent(
+                navController = navController,
+                drawerState = drawerState,
+                scope = scope
+            )
+        }
     }
 }
+
 
 // LandingScreen composable
 @Composable

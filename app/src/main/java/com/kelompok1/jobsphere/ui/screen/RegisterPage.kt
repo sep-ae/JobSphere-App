@@ -283,6 +283,7 @@ fun RegisterPage(
                 onClick = {
                     if (validateEmail() && validatePassword() && validateConfirmPassword() && agreeToTerms) {
                         authViewModel.signup(email, password, "job_seeker", username)
+                        navController.navigate("login")
                     }
                 },
                 modifier = Modifier.weight(1f),
@@ -296,6 +297,7 @@ fun RegisterPage(
                 onClick = {
                     if (validateEmail() && validatePassword() && validateConfirmPassword() && agreeToTerms) {
                         authViewModel.signup(email, password, "company", username)
+                        navController.navigate("login")
                     }
                 },
                 modifier = Modifier.weight(1f),
