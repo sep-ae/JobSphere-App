@@ -2,8 +2,8 @@ package com.kelompok1.jobsphere.ui.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
@@ -26,6 +26,7 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
     var isLoginAttempted by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    // State untuk Auth
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
 
@@ -33,19 +34,25 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
         if (isLoginAttempted) {
             when (authState.value) {
                 is AuthState.Authenticated -> {
+                    // Ambil role dan username setelah login sukses
                     val role = (authState.value as AuthState.Authenticated).role
                     val username = (authState.value as AuthState.Authenticated).username
+
+                    // Navigasi berdasarkan role
                     val destination = when (role) {
                         "job_seeker" -> "JobSeekerHome/$username"
                         "company" -> "CompanyHome/$username"
-                        else -> "Login" // Fallback jika role tidak dikenal
+                        else -> "Login" // Fallback jika role tidak dikenali
                     }
+
                     navController.navigate(destination) {
-                        popUpTo("Login") { inclusive = true } // Hapus halaman login dari backstack
+                        // Hapus halaman login dari backstack supaya pengguna tidak bisa kembali ke halaman login
+                        popUpTo("Login") { inclusive = true }
                     }
                     isLoginAttempted = false
                 }
                 is AuthState.Error -> {
+                    // Tampilkan pesan error jika terjadi kesalahan
                     Toast.makeText(
                         context,
                         (authState.value as AuthState.Error).message,
@@ -90,7 +97,7 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
         )
 
         Button(onClick = {
-            authViewModel.login(email, password) // Memulai proses login
+            authViewModel.login(email, password) // Mulai proses login
             isLoginAttempted = true
         }) {
             Text("Login")
@@ -103,9 +110,3 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
         }
     }
 }
-
-
-
-
-
-

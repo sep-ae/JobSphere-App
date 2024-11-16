@@ -98,7 +98,7 @@ fun RegisterPage(
                 imageVector = Icons.Filled.ChevronLeft,
                 contentDescription = "Back",
                 modifier = Modifier
-                    .clickable { navController.navigate("landing") }
+                    .clickable { navController.popBackStack() } // Back to previous screen (Landing)
                     .size(24.dp)
             )
 
@@ -274,7 +274,7 @@ fun RegisterPage(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Register Btn
+        // Register Btn for Job Seeker and Company
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth()
@@ -283,7 +283,7 @@ fun RegisterPage(
                 onClick = {
                     if (validateEmail() && validatePassword() && validateConfirmPassword() && agreeToTerms) {
                         authViewModel.signup(email, password, "job_seeker", username)
-                        navController.navigate("login")
+                        navController.navigate("login") // Navigate to login screen after successful registration
                     }
                 },
                 modifier = Modifier.weight(1f),
@@ -297,7 +297,7 @@ fun RegisterPage(
                 onClick = {
                     if (validateEmail() && validatePassword() && validateConfirmPassword() && agreeToTerms) {
                         authViewModel.signup(email, password, "company", username)
-                        navController.navigate("login")
+                        navController.navigate("login") // Navigate to login screen after successful registration
                     }
                 },
                 modifier = Modifier.weight(1f),
@@ -313,7 +313,7 @@ fun RegisterPage(
         Text(
             text = "Already have an account? Login",
             modifier = Modifier
-                .clickable { navController.navigate("login") }
+                .clickable { navController.navigate("login") } // Navigate to login screen
                 .padding(vertical = 16.dp),
             color = Color.Black,
             fontSize = 14.sp,
@@ -329,3 +329,4 @@ fun RegisterPage(
         )
     }
 }
+

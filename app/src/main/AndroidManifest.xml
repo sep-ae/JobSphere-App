@@ -1,35 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    package="com.kelompok1.jobsphere">
 
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
         android:theme="@style/Theme.JobSphere"
-        tools:targetApi="31">
+        android:supportsRtl="true">
 
-        <!-- Splash Activity sebagai layar awal -->
+        <!-- Main Activity sebagai layar utama -->
         <activity
-            android:name=".ui.screen.SplashScreenActivity"
+            android:name=".MainActivity"
             android:exported="true"
+            android:label="@string/app_name"
             android:theme="@style/Theme.JobSphere">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Main Activity sebagai layar setelah Splash -->
-        <activity
-            android:name=".ui.screen.LandingScreenActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.JobSphere" />
     </application>
-
 </manifest>

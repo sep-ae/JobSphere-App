@@ -18,7 +18,7 @@ import com.kelompok1.jobsphere.ui.components.BottomNavigationBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun CompanyHomeContent(
+fun CompanyHomePage(
     navController: NavController,
     drawerState: DrawerState,
     scope: CoroutineScope
