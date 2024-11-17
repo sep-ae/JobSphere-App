@@ -1,6 +1,6 @@
 package com.kelompok1.jobsphere.ui.navigation
 
-import androidx.compose.material.DrawerState
+import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost

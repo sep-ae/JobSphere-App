@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.Divider
-import androidx.compose.material.DrawerState
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
-import com.kelompok1.jobsphere.ui.components.BottomNavigationBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -39,7 +38,6 @@ fun JobSeekerHomePage(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header dengan nama pengguna dan ikon notifikasi
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -103,8 +101,7 @@ fun JobSeekerHomePage(
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    // Bottom Navigation Bar
-    BottomNavigationBar(navController = navController, drawerState = drawerState, scope = scope)
+
 }
 
 

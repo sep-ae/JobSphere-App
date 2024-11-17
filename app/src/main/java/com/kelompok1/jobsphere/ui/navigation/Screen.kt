@@ -5,6 +5,7 @@ object Screen {
     val Landing = ScreenRoute("landing")
     val Login = ScreenRoute("login")
     val Register = ScreenRoute("register")
+    val CompanyHomePage = ScreenRoute("companyHomePage")
 }
 
 data class ScreenRoute(val route: String)
