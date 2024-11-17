@@ -2,6 +2,7 @@ package com.kelompok1.jobsphere.ui.company
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,31 +15,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.components.BottomNavigationBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun CompanyHomePage(
+    username: String,
     navController: NavController,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    userViewModel: UserViewModel
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header Section
-        Text(
-            text = "Hire with Precision",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Appropriate and effective recruitment of the company's best talents",
-            fontSize = 16.sp,
-            color = Color.Gray
-        )
+        // Header dengan nama pengguna dan ikon notifikasi
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Hire with Precision, $username", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Notifications",
+                modifier = Modifier.padding(end = 8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -47,55 +52,50 @@ fun CompanyHomePage(
             value = "",
             onValueChange = {},
             label = { Text("Find a job") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 8.dp),
-            trailingIcon = {
-                Icon(Icons.Default.Notifications, contentDescription = "Notifications")
-            }
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         Divider()
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Latest Job Openings", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // Latest Job Openings Section
+        Text(
+            text = "Recruitments Progress",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            repeat(3) { JobItemPlaceholder() }
+            items(3) {
+                JobItemPlaceholder()
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
         Divider()
 
-        Text(text = "Jobs from Last Week", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        // Jobs from Last Week Section
+        Text(
+            text = "Jobs from Last Week",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            repeat(3) { JobItemPlaceholder() }
+            repeat(3) {
+                JobItemPlaceholder()
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Floating Action Button
-        FloatingActionButton(
-            onClick = { /* Add Job Action */ },
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(16.dp),
-            backgroundColor = Color.Black
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Add Job", tint = Color.White)
-        }
     }
+
     // Bottom Navigation Bar
     BottomNavigationBar(navController = navController, drawerState = drawerState, scope = scope)
 }

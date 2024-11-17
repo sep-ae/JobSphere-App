@@ -50,9 +50,15 @@ fun AppNavHost(
             )
         }
 
-        composable("CompanyHome") {
-            // Pass navController to CompanyHomePage
-            CompanyHomePage(navController = navController, drawerState = drawerState, scope = scope)
+        composable("CompanyHome/{username}") { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username")
+            CompanyHomePage(
+                navController = navController,
+                username = username ?: "",
+                userViewModel = userViewModel,
+                drawerState = drawerState,
+                scope = scope
+            )
         }
     }
 }

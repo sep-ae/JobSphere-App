@@ -48,6 +48,9 @@ dependencies {
     implementation("androidx.compose.material:material:1.7.5")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.8.1")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
 
     implementation(libs.androidx.core.ktx)
@@ -63,6 +66,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.constraintlayout.compose.android)
+    implementation(libs.androidx.navigation.testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +75,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    val nav_version = "2.8.3"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+
 }
