@@ -194,7 +194,7 @@ fun MainContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Job",
+                    contentDescription = "Add Icon",
                     tint = Color.White,
                     modifier = Modifier.size(36.dp)
                 )

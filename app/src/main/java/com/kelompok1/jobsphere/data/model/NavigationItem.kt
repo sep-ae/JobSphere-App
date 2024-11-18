@@ -21,5 +21,9 @@ enum class NavigationItem(
     Settings(
         icon = R.drawable.baseline_setting_24,
         title = "Settings"
+    ),
+    Logout(
+        icon = R.drawable.baseline_logout_24, // Add your logout icon here
+        title = "Logout"
     )
 }

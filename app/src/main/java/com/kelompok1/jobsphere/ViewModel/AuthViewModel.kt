@@ -17,6 +17,7 @@ class AuthViewModel : ViewModel() {
         checkAuthStatus()
     }
 
+    // Memeriksa status autentikasi pengguna
     fun checkAuthStatus() {
         val currentUser = auth.currentUser
         if (currentUser == null) {
@@ -26,6 +27,7 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // Mengambil data pengguna setelah login
     private fun fetchUserData(userId: String) {
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
@@ -38,11 +40,12 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-
+    // Validasi password minimal 8 karakter
     private fun isPasswordValid(password: String): Boolean {
         return password.length >= 8
     }
 
+    // Memeriksa apakah email sudah digunakan
     private fun checkIfEmailExists(email: String, onComplete: (Boolean) -> Unit) {
         auth.fetchSignInMethodsForEmail(email)
             .addOnCompleteListener { task ->
@@ -55,6 +58,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    // Fungsi untuk login pengguna
     fun login(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error("Email or Password can't be empty")
@@ -74,6 +78,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
+    // Fungsi untuk signup pengguna
     fun signup(email: String, password: String, role: String, username: String) {
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
             _authState.value = AuthState.Error("Email, Password, and Username can't be empty")
@@ -117,12 +122,14 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    // Fungsi untuk logout pengguna
     fun signout() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
     }
 }
 
+// Status autentikasi pengguna
 sealed class AuthState {
     data class Authenticated(val username: String, val role: String) : AuthState()
     object Unauthenticated : AuthState()
