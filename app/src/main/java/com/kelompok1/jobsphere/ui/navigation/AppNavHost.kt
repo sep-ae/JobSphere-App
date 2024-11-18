@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kelompok1.jobsphere.ViewModel.AuthState
 import com.kelompok1.jobsphere.ViewModel.AuthViewModel
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
+import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
@@ -71,6 +72,9 @@ fun AppNavHost(
                 drawerState = drawerState,
                 scope = scope
             )
+        }
+        composable(Screen.AddJobPage.route) {
+            AddJobPage(navController = navController)
         }
     }
 }

@@ -183,7 +183,7 @@ fun MainContent(
             )
 
             FloatingActionButton(
-                onClick = { /* Action when clicked, e.g., navigate to another screen */ },
+                onClick = { navController.navigate("addJobPage")},
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(0.dp)

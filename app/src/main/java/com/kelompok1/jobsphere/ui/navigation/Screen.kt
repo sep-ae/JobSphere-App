@@ -14,4 +14,6 @@ sealed class Screen(val route: String) {
     object CompanyHomePage : Screen("companyHomePage/{username}") {
         fun createRoute(username: String) = "companyHomePage/$username"
     }
+
+    object AddJobPage : Screen("addJobPage")
 }
