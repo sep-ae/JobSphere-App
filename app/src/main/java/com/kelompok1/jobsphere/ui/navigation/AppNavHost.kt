@@ -14,6 +14,8 @@ import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
+import com.kelompok1.jobsphere.ui.company.JobHistoryCompany
+import com.kelompok1.jobsphere.ui.company.CompanyProfile
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
@@ -41,11 +43,11 @@ fun AppNavHost(
         else -> Screen.Landing.route
     }
 
-    // NavHost dengan rute dinamis
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
+        //Routing Utama
         composable(Screen.Landing.route) {
             LandingScreen(navController = navController, authViewModel = authViewModel)
         }
@@ -55,6 +57,8 @@ fun AppNavHost(
         composable(Screen.Register.route) {
             RegisterPage(navController = navController, authViewModel = authViewModel)
         }
+
+        //Routing JobSeeker
         composable(Screen.JobSeekerHomePage.route) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: ""
             JobSeekerHomePage(
@@ -65,6 +69,8 @@ fun AppNavHost(
                 scope = scope
             )
         }
+
+        // Routing Company
         composable(Screen.CompanyHomePage.route) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: ""
             CompanyHomePage(
@@ -87,6 +93,12 @@ fun AppNavHost(
                     println("Error: $errorMessage")
                 }
             )
+        }
+        composable(Screen.JobHistoryCompany.route) {
+            JobHistoryCompany()
+        }
+        composable(Screen.CompanyProfile.route) {
+            CompanyProfile()
         }
     }
 }

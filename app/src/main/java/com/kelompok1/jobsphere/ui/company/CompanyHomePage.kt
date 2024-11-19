@@ -35,6 +35,7 @@ import com.kelompok1.jobsphere.data.model.NavigationItem
 import com.kelompok1.jobsphere.data.model.isOpened
 import com.kelompok1.jobsphere.data.model.opposite
 import com.kelompok1.jobsphere.ui.components.CustomDrawer
+import com.kelompok1.jobsphere.ui.navigation.Screen
 import com.kelompok1.jobsphere.ui.util.coloredShadow
 import kotlinx.coroutines.CoroutineScope
 import kotlin.math.roundToInt
@@ -96,7 +97,6 @@ fun CompanyHomePage(
                         handleLogout(navController, userViewModel)
                     }
                     else -> {
-                        // Navigasi ke item lainnya
                         selectedNavigationItem = navigationItem
                     }
                 }
@@ -135,52 +135,41 @@ fun MainContent(
     selectedItem: Int,
     onSelectedItem: (index: Int) -> Unit
 ) {
-    val items = listOf("menu1", "menu2", "menu3", "menu4")
+    // Daftar item Bottom Navigation
+    val items = listOf(
+        Pair("Menu", Icons.Filled.Menu),
+        Pair("History", Icons.Filled.ShoppingBag),
+        Pair("Profile", Icons.Filled.Person)
+    )
 
     Scaffold(
         modifier = modifier
             .clickable(enabled = drawerState == CustomDrawerState.Opened) {
                 onDrawerClick(CustomDrawerState.Closed)
             },
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Welcome $username") },
-                navigationIcon = {
-                    IconButton(onClick = { onDrawerClick(drawerState.opposite()) }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu Icon"
-                        )
-                    }
-                }
-            )
-        },
         bottomBar = {
             BottomNavigation(
                 modifier = Modifier
                     .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                     .clip(RoundedCornerShape(50)),
-                elevation = 10.dp,
-                backgroundColor = Color.DarkGray
+                backgroundColor = Color.DarkGray,
+                elevation = 10.dp
             ) {
-                items.forEachIndexed { index, _ ->
+                items.forEachIndexed { index, item ->
                     BottomNavigationItem(
                         icon = {
-                            when (index) {
-                                0 -> Icon(Icons.Filled.FormatListBulleted, contentDescription = "Menu 1")
-                                1 -> Icon(Icons.Filled.ShoppingBag, contentDescription = "Menu 2")
-                                2 -> Icon(Icons.Filled.Person, contentDescription = "Manu 3")
-                                3 -> Icon(Icons.Filled.Home, contentDescription = "Menu 4")
-                            }
+                            Icon(
+                                imageVector = item.second,
+                                contentDescription = item.first
+                            )
                         },
                         selected = selectedItem == index,
                         onClick = {
                             onSelectedItem(index)
                             when (index) {
-                                0 -> navController.navigate("Menu1Screen")
-                                1 -> navController.navigate("Menu2Screen")
-                                2 -> navController.navigate("ProfileScreen")
-                                3 -> navController.navigate("Menu4Screen")
+                                0 -> onDrawerClick(drawerState.opposite())
+                                1 -> navController.navigate(Screen.JobHistoryCompany.route)
+                                2 -> navController.navigate(Screen.CompanyProfile.route)
                             }
                         },
                         selectedContentColor = Color.Cyan,
@@ -190,23 +179,22 @@ fun MainContent(
             }
         }
     ) {
+        // Konten layar utama
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Welcome to the Company Home Page",
+                text = "Welcome, $username",
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                 fontWeight = FontWeight.Medium
             )
 
             FloatingActionButton(
-                onClick = { navController.navigate("addJobPage")},
+                onClick = { navController.navigate("addJobPage") },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(0.dp)
-                    .offset(y = (-90).dp)
-                    .padding(end = 24.dp),
+                    .padding(end = 24.dp, bottom = 16.dp),
                 shape = RoundedCornerShape(50),
                 containerColor = Color.Blue
             ) {
@@ -221,14 +209,5 @@ fun MainContent(
     }
 }
 
-@Composable
-fun JobItemPlaceholder() {
-    Box(
-        modifier = Modifier
-            .size(100.dp, 80.dp)
-            .background(Color.LightGray),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Job", color = Color.Gray)
-    }
-}
+
+
