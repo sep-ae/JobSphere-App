@@ -24,4 +24,7 @@ class UserViewModel : ViewModel() {
             emit(user)
         }
     }
+    fun logoutUser() {
+        firebaseAuth.signOut() // Logout dari Firebase Authentication
+    }
 }

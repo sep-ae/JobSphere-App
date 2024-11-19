@@ -67,6 +67,16 @@ fun CompanyHomePage(
         label = "Animated Scale"
     )
 
+    fun handleLogout(navController: NavController, userViewModel: UserViewModel) {
+        // Proses logout Firebase
+        userViewModel.logoutUser()
+
+        // Navigasikan ke layar login dan bersihkan stack
+        navController.navigate("login") {
+            popUpTo(0) { inclusive = true } // Menghapus semua layar sebelumnya
+        }
+    }
+
     BackHandler(enabled = drawerState.isOpened()) {
         drawerState = CustomDrawerState.Closed
     }
@@ -80,8 +90,16 @@ fun CompanyHomePage(
     ) {
         CustomDrawer(
             selectedNavigationItem = selectedNavigationItem,
-            onNavigationItemClick = {
-                selectedNavigationItem = it
+            onNavigationItemClick = { navigationItem ->
+                when (navigationItem) {
+                    NavigationItem.Logout -> {
+                        handleLogout(navController, userViewModel)
+                    }
+                    else -> {
+                        // Navigasi ke item lainnya
+                        selectedNavigationItem = navigationItem
+                    }
+                }
                 drawerState = CustomDrawerState.Closed
             },
             onCloseClick = { drawerState = CustomDrawerState.Closed }
@@ -151,7 +169,7 @@ fun MainContent(
                             when (index) {
                                 0 -> Icon(Icons.Filled.FormatListBulleted, contentDescription = "Menu 1")
                                 1 -> Icon(Icons.Filled.ShoppingBag, contentDescription = "Menu 2")
-                                2 -> Icon(Icons.Filled.Person, contentDescription = "Menu 3")
+                                2 -> Icon(Icons.Filled.Person, contentDescription = "Manu 3")
                                 3 -> Icon(Icons.Filled.Home, contentDescription = "Menu 4")
                             }
                         },
@@ -161,7 +179,7 @@ fun MainContent(
                             when (index) {
                                 0 -> navController.navigate("Menu1Screen")
                                 1 -> navController.navigate("Menu2Screen")
-                                2 -> navController.navigate("Menu3Screen")
+                                2 -> navController.navigate("ProfileScreen")
                                 3 -> navController.navigate("Menu4Screen")
                             }
                         },

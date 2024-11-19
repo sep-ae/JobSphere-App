@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         is AuthState.Unauthenticated -> {
-                            navController.navigate(Screen.Login.route) {
+                            navController.navigate(Screen.Landing.route) {
                                 popUpTo(Screen.Landing.route) { inclusive = true }
                             }
                         }

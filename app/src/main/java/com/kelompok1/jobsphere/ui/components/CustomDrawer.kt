@@ -69,15 +69,7 @@ fun CustomDrawer(
             NavigationItemView(
                 navigationItem = navigationItem,
                 selected = false,
-                onClick = {
-                    when (navigationItem) {
-                        NavigationItem.Settings -> {
-                            onNavigationItemClick(NavigationItem.Settings)
-                        }
-
-                        else -> {}
-                    }
-                }
+                onClick = { onNavigationItemClick(navigationItem) }
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
