@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kelompok1.jobsphere.ViewModel.AuthState
 import com.kelompok1.jobsphere.ViewModel.AuthViewModel
+import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
@@ -24,6 +25,7 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    jobViewModel: JobViewModel,
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
@@ -74,7 +76,17 @@ fun AppNavHost(
             )
         }
         composable(Screen.AddJobPage.route) {
-            AddJobPage(navController = navController)
+            AddJobPage(
+                navController = navController,
+                userViewModel = userViewModel,
+                jobViewModel = jobViewModel,
+                onJobAdded = {
+                    navController.popBackStack()
+                },
+                onError = { errorMessage ->
+                    println("Error: $errorMessage")
+                }
+            )
         }
     }
 }
