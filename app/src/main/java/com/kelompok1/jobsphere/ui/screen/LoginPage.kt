@@ -113,13 +113,15 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
 
         // Email Field
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally){
+            modifier = Modifier.fillMaxWidth()) {
+            androidx.compose.material.Text(
+                text = "Email",
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
             androidx.compose.material.OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(text = "Email") },
                 shape = RoundedCornerShape(35.dp),
                 modifier = Modifier.fillMaxWidth(0.8f),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -134,13 +136,16 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
 
         // Password Field
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            modifier = Modifier.fillMaxWidth()) {
+            androidx.compose.material.Text(
+                text = "Password",
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
             androidx.compose.material.OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(text = "Password") },
                 shape = RoundedCornerShape(35.dp),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(0.8f),
@@ -161,7 +166,7 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
             Text("SignUp")
         }
 
-        Spacer(modifier = Modifier.height(250.dp))
+        Spacer(modifier = Modifier.height(230.dp))
 
         TextButton(onClick = { navController.navigate("register") }) {
             Text(text = "Don’t have an account? Register")
