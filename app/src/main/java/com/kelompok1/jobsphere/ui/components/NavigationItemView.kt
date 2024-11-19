@@ -46,14 +46,14 @@ fun NavigationItemView(
         Icon(
             painter = painterResource(id = navigationItem.icon),
             contentDescription = "Navigation Item Icon",
-            tint = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface
+            tint = if (selected) Color.Black
+            else Color.White
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = navigationItem.title,
-            color = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurface,
+            color = if (selected) Color.Black // Teks juga menjadi putih jika dipilih
+            else Color.White,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             lineHeight = 20.sp
         )

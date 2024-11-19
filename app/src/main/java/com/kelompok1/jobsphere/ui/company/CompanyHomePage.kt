@@ -89,6 +89,7 @@ fun CompanyHomePage(
             .fillMaxSize()
     ) {
         CustomDrawer(
+            username = username,
             selectedNavigationItem = selectedNavigationItem,
             onNavigationItemClick = { navigationItem ->
                 when (navigationItem) {
