@@ -84,20 +84,32 @@ class JobViewModel : ViewModel() {
             _jobState.value = ResultState.Loading
 
             try {
+                // Buat query tergantung pada apakah untuk perusahaan atau tidak
                 val query = if (forCompany) {
                     firestore.collection("jobs")
-                        .whereEqualTo("userId", auth.currentUser?.uid)
+                        .whereEqualTo("userId", auth.currentUser?.uid) // Untuk perusahaan yang sesuai userId
                 } else {
-                    firestore.collection("jobs")
+                    firestore.collection("jobs") // Ambil semua pekerjaan
                 }
 
+                // Ambil snapshot dari query Firestore
                 val snapshot = query.get().await()
-                val jobList = snapshot.documents.mapNotNull { it.toObject(Job::class.java) }
+
+                // Map setiap dokumen menjadi objek Job dan tambahkan document.id sebagai id
+                val jobList = snapshot.documents.mapNotNull { document ->
+                    val job = document.toObject(Job::class.java)
+                    // Pastikan job tidak null dan tambahkan document.id ke dalam objek job
+                    job?.copy(id = document.id)
+                }
+
+                // Update state dengan hasil data pekerjaan
                 _jobs.value = jobList
                 _jobState.value = ResultState.Success(Unit)
             } catch (e: Exception) {
+                // Tangani jika ada error
                 _jobState.value = ResultState.Failure("Failed to fetch jobs: ${e.message ?: "Unknown error"}")
             }
         }
     }
+
 }

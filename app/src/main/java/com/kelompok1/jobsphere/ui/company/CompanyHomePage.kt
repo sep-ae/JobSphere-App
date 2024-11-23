@@ -12,29 +12,34 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LockClock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
+import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.data.model.CustomDrawerState
+import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.data.model.NavigationItem
 import com.kelompok1.jobsphere.data.model.isOpened
 import com.kelompok1.jobsphere.data.model.opposite
 import com.kelompok1.jobsphere.ui.components.CustomDrawer
+import com.kelompok1.jobsphere.ui.components.LazyColumnJob
+import com.kelompok1.jobsphere.ui.components.LazyRowJob
+import com.kelompok1.jobsphere.ui.components.SearchBarComponent
 import com.kelompok1.jobsphere.ui.navigation.Screen
 import com.kelompok1.jobsphere.ui.util.coloredShadow
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +51,8 @@ fun CompanyHomePage(
     username: String,
     drawerState: DrawerState,
     scope: CoroutineScope,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    jobViewModel: JobViewModel
 ) {
     var drawerState by remember { mutableStateOf(CustomDrawerState.Closed) }
     var selectedNavigationItem by remember { mutableStateOf(NavigationItem.Home) }
@@ -68,13 +74,19 @@ fun CompanyHomePage(
         label = "Animated Scale"
     )
 
+    val jobsState = jobViewModel.jobs.collectAsState()
+    val jobs = jobsState.value
+
+    LaunchedEffect(Unit) {
+        jobViewModel.fetchJobs(forCompany = true)
+    }
+
     fun handleLogout(navController: NavController, userViewModel: UserViewModel) {
         // Proses logout Firebase
         userViewModel.logoutUser()
 
-        // Navigasikan ke layar login dan bersihkan stack
         navController.navigate("login") {
-            popUpTo(0) { inclusive = true } // Menghapus semua layar sebelumnya
+            popUpTo(0) { inclusive = true }
         }
     }
 
@@ -119,13 +131,13 @@ fun CompanyHomePage(
             username = username,
             navController = navController,
             selectedItem = selectedItem,
-            onSelectedItem = { index -> selectedItem = index }
+            onSelectedItem = { index -> selectedItem = index },
+            jobs = jobs
         )
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
@@ -134,12 +146,14 @@ fun MainContent(
     username: String,
     navController: NavController,
     selectedItem: Int,
-    onSelectedItem: (index: Int) -> Unit
+    onSelectedItem: (index: Int) -> Unit,
+    jobs: List<Job>
 ) {
-    // Daftar item Bottom Navigation
+    val context = LocalContext.current
+
     val items = listOf(
         Pair("Menu", Icons.Filled.Menu),
-        Pair("History", Icons.Filled.ShoppingBag),
+        Pair("History", Icons.Filled.LockClock),
         Pair("Profile", Icons.Filled.Person)
     )
 
@@ -153,7 +167,7 @@ fun MainContent(
                 modifier = Modifier
                     .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                     .clip(RoundedCornerShape(50)),
-                backgroundColor = Color.DarkGray,
+                backgroundColor = Color(0xFF134B70),
                 elevation = 10.dp
             ) {
                 items.forEachIndexed { index, item ->
@@ -161,7 +175,8 @@ fun MainContent(
                         icon = {
                             Icon(
                                 imageVector = item.second,
-                                contentDescription = item.first
+                                contentDescription = item.first,
+                                tint = Color.White
                             )
                         },
                         selected = selectedItem == index,
@@ -178,26 +193,12 @@ fun MainContent(
                     )
                 }
             }
-        }
-    ) {
-        // Konten layar utama
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Welcome, $username",
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                fontWeight = FontWeight.Medium
-            )
-
+        },
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("addJobPage") },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 24.dp, bottom = 16.dp),
                 shape = RoundedCornerShape(50),
-                containerColor = Color.Blue
+                containerColor = Color(0xFF134B70)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -206,9 +207,47 @@ fun MainContent(
                     modifier = Modifier.size(36.dp)
                 )
             }
+        },
+        content = { innerPadding ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Main content in the Box
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    SearchBarComponent()
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "Recruitment Progress",
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    LazyRowJob(context = context, jobs = jobs, navController = navController)
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Jobs from Last Week",
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    LazyColumnJob(context = context, jobs = jobs, navController = navController)
+                }
+
+            }
         }
-    }
+    )
 }
-
-
-

@@ -45,7 +45,11 @@ fun AddJobPage(
     LaunchedEffect(jobState) {
         when (jobState) {
             is ResultState.Success -> {
-                onJobAdded()
+                onJobAdded() // Handle successful job addition
+                navController.navigate(Screen.CompanyHomePage.route) {
+                    // Pop the back stack to avoid going back to the AddJobPage
+                    popUpTo(Screen.CompanyHomePage.route) { inclusive = true }
+                }
             }
             is ResultState.Failure -> {
                 onError((jobState as ResultState.Failure).error)
@@ -154,7 +158,7 @@ fun AddJobPage(
         ) {
             Button(
                 onClick = {
-                    navController.navigate(Screen.CompanyHomePage.route)
+                    navController.popBackStack() // Go back to the previous screen
                 },
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             ) {

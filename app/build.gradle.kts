@@ -52,6 +52,10 @@ dependencies {
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.1")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha04")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

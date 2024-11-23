@@ -1,7 +1,9 @@
 package com.kelompok1.jobsphere.ui.navigation
 
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavHostController
@@ -16,6 +18,8 @@ import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
 import com.kelompok1.jobsphere.ui.company.JobHistoryCompany
 import com.kelompok1.jobsphere.ui.company.CompanyProfile
+import com.kelompok1.jobsphere.ui.company.JobView
+import com.kelompok1.jobsphere.ui.company.ProgressView
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
@@ -47,7 +51,7 @@ fun AppNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        //Routing Utama
+        // Routing Utama
         composable(Screen.Landing.route) {
             LandingScreen(navController = navController, authViewModel = authViewModel)
         }
@@ -58,7 +62,7 @@ fun AppNavHost(
             RegisterPage(navController = navController, authViewModel = authViewModel)
         }
 
-        //Routing JobSeeker
+        // Routing JobSeeker
         composable(Screen.JobSeekerHomePage.route) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: ""
             JobSeekerHomePage(
@@ -77,28 +81,56 @@ fun AppNavHost(
                 navController = navController,
                 username = username,
                 userViewModel = userViewModel,
+                jobViewModel = jobViewModel,
                 drawerState = drawerState,
                 scope = scope
             )
         }
+
         composable(Screen.AddJobPage.route) {
             AddJobPage(
                 navController = navController,
                 userViewModel = userViewModel,
                 jobViewModel = jobViewModel,
                 onJobAdded = {
-                    navController.popBackStack()
+                    navController.popBackStack(Screen.CompanyHomePage.route, false)
                 },
                 onError = { errorMessage ->
                     println("Error: $errorMessage")
                 }
             )
         }
+
         composable(Screen.JobHistoryCompany.route) {
             JobHistoryCompany()
         }
+
         composable(Screen.CompanyProfile.route) {
             CompanyProfile()
+        }
+
+        composable(Screen.ProgresView.route) { backStackEntry ->
+            val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
+            val jobsState by jobViewModel.jobs.collectAsState()
+
+            val job = jobsState.find { it.id == jobId }
+            if (job != null) {
+                ProgressView(job = job, navController = navController)
+            } else {
+                Text(text = "Job not found!")
+            }
+        }
+
+        composable(Screen.JobView.route) { backStackEntry ->
+            val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
+            val jobsState by jobViewModel.jobs.collectAsState()
+
+            val job = jobsState.find { it.id == jobId }
+            if (job != null) {
+                JobView(job = job, navController = navController)
+            } else {
+                Text(text = "Job not found!")
+            }
         }
     }
 }
