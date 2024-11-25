@@ -113,7 +113,10 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
 
         // Email Field
         Column(
-            modifier = Modifier.fillMaxWidth()) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp) // Padding kiri dan kanan
+        ) {
             androidx.compose.material.Text(
                 text = "Email",
                 fontSize = 14.sp,
@@ -123,7 +126,7 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
                 value = email,
                 onValueChange = { email = it },
                 shape = RoundedCornerShape(35.dp),
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = Grey,
                     focusedBorderColor = Grey,
@@ -136,7 +139,10 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
 
         // Password Field
         Column(
-            modifier = Modifier.fillMaxWidth()) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp) // Padding kiri dan kanan
+        ) {
             androidx.compose.material.Text(
                 text = "Password",
                 fontSize = 14.sp,
@@ -148,21 +154,24 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
                 onValueChange = { password = it },
                 shape = RoundedCornerShape(35.dp),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     backgroundColor = Grey,
                     focusedBorderColor = Grey,
                     unfocusedBorderColor = Grey
-            )
+                )
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { authViewModel.login(email, password) // Mulai proses login
-            isLoginAttempted = true },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))) {
+            onClick = {
+                authViewModel.login(email, password) // Mulai proses login
+                isLoginAttempted = true
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))
+        ) {
             Text("SignUp")
         }
 

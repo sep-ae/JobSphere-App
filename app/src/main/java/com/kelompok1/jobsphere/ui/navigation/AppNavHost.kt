@@ -42,7 +42,7 @@ fun AppNavHost(
     val startDestination = when (authState) {
         is AuthState.Authenticated -> {
             val role = (authState as AuthState.Authenticated).role
-            if (role == "jobseeker") Screen.JobSeekerHomePage.route else Screen.CompanyHomePage.route
+            if (role == "job_seeker") Screen.JobSeekerHomePage.route else Screen.CompanyHomePage.route
         }
         else -> Screen.Landing.route
     }
@@ -69,6 +69,7 @@ fun AppNavHost(
                 navController = navController,
                 username = username,
                 userViewModel = userViewModel,
+                jobViewModel = jobViewModel,
                 drawerState = drawerState,
                 scope = scope
             )
