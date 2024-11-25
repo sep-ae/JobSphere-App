@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// Sealed class untuk merepresentasikan status hasil operasi
 sealed class ResultState<out T> {
+    object Idle : ResultState<Nothing>() // Tambahan state untuk idle
     object Loading : ResultState<Nothing>()
     data class Success<out T>(val data: T) : ResultState<T>()
     data class Failure(val error: String) : ResultState<Nothing>()
@@ -21,12 +23,13 @@ class JobViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    private val _jobState = MutableStateFlow<ResultState<Unit>>(ResultState.Loading)
+    private val _jobState = MutableStateFlow<ResultState<Unit>>(ResultState.Idle)
     val jobState: StateFlow<ResultState<Unit>> = _jobState
 
     private val _jobs = MutableStateFlow<List<Job>>(emptyList())
     val jobs: StateFlow<List<Job>> = _jobs
 
+    // Fungsi untuk menambahkan pekerjaan
     fun addJob(
         title: String,
         description: String,
@@ -64,14 +67,12 @@ class JobViewModel : ViewModel() {
             jobType = jobType,
             started = started,
             deadline = deadline
-
         )
 
         viewModelScope.launch {
             _jobState.value = ResultState.Loading
             try {
                 firestore.collection("jobs").add(job).await()
-
                 _jobState.value = ResultState.Success(Unit)
             } catch (e: Exception) {
                 _jobState.value = ResultState.Failure("Failed to add job: ${e.message ?: "Unknown error"}")
@@ -79,37 +80,53 @@ class JobViewModel : ViewModel() {
         }
     }
 
+    // Fungsi untuk mengambil pekerjaan
     fun fetchJobs(forCompany: Boolean = false) {
         viewModelScope.launch {
             _jobState.value = ResultState.Loading
 
             try {
-                // Buat query tergantung pada apakah untuk perusahaan atau tidak
                 val query = if (forCompany) {
                     firestore.collection("jobs")
-                        .whereEqualTo("userId", auth.currentUser?.uid) // Untuk perusahaan yang sesuai userId
+                        .whereEqualTo("userId", auth.currentUser?.uid)
                 } else {
-                    firestore.collection("jobs") // Ambil semua pekerjaan
+                    firestore.collection("jobs")
                 }
 
-                // Ambil snapshot dari query Firestore
                 val snapshot = query.get().await()
 
-                // Map setiap dokumen menjadi objek Job dan tambahkan document.id sebagai id
                 val jobList = snapshot.documents.mapNotNull { document ->
                     val job = document.toObject(Job::class.java)
-                    // Pastikan job tidak null dan tambahkan document.id ke dalam objek job
                     job?.copy(id = document.id)
                 }
 
-                // Update state dengan hasil data pekerjaan
                 _jobs.value = jobList
                 _jobState.value = ResultState.Success(Unit)
             } catch (e: Exception) {
-                // Tangani jika ada error
                 _jobState.value = ResultState.Failure("Failed to fetch jobs: ${e.message ?: "Unknown error"}")
             }
         }
     }
 
+    // Fungsi untuk menghapus pekerjaan
+    fun deleteJob(jobId: String) {
+        viewModelScope.launch {
+            _jobState.value = ResultState.Loading
+            try {
+                firestore.collection("jobs").document(jobId).delete().await()
+
+                val updatedJobs = _jobs.value.filterNot { it.id == jobId }
+                _jobs.value = updatedJobs
+
+                _jobState.value = ResultState.Success(Unit)
+            } catch (e: Exception) {
+                _jobState.value = ResultState.Failure("Failed to delete job: ${e.message ?: "Unknown error"}")
+            }
+        }
+    }
+
+    // Fungsi untuk mereset state
+    fun resetJobState() {
+        _jobState.value = ResultState.Idle
+    }
 }

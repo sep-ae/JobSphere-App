@@ -1,7 +1,6 @@
 package com.kelompok1.jobsphere.ui.components
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +23,6 @@ import com.kelompok1.jobsphere.ui.navigation.Screen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.CardDefaults
 
-
 @Composable
 fun LazyRowJob(
     context: Context,
@@ -39,10 +37,7 @@ fun LazyRowJob(
                 modifier = Modifier
                     .width(250.dp)
                     .height(150.dp)
-                    .padding(8.dp)
-                    .clickable {
-                        navController.navigate(Screen.ProgresView.createRoute(job.id))
-                    },
+                    .padding(8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White
                 ),

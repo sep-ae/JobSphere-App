@@ -21,7 +21,7 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgressView(job: Job, navController: NavController) {
+fun JobHistoryCompanyView(job: Job, navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -34,7 +34,7 @@ fun ProgressView(job: Job, navController: NavController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(Screen.CompanyHomePage.route) }) {
+                    IconButton(onClick = { navController.navigate(Screen.JobHistoryCompany.route) }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },

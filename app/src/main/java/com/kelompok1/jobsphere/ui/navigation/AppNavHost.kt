@@ -1,5 +1,6 @@
 package com.kelompok1.jobsphere.ui.navigation
 
+import JobHistoryCompany
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,10 +17,9 @@ import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
-import com.kelompok1.jobsphere.ui.company.JobHistoryCompany
 import com.kelompok1.jobsphere.ui.company.CompanyProfile
+import com.kelompok1.jobsphere.ui.company.JobHistoryCompanyView
 import com.kelompok1.jobsphere.ui.company.JobView
-import com.kelompok1.jobsphere.ui.company.ProgressView
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
@@ -93,29 +93,36 @@ fun AppNavHost(
                 userViewModel = userViewModel,
                 jobViewModel = jobViewModel,
                 onJobAdded = {
-                    navController.popBackStack(Screen.CompanyHomePage.route, false)
                 },
                 onError = { errorMessage ->
-                    println("Error: $errorMessage")
                 }
             )
         }
 
+
+
         composable(Screen.JobHistoryCompany.route) {
-            JobHistoryCompany()
+            val jobsState by jobViewModel.jobs.collectAsState()
+
+            JobHistoryCompany(
+                navController = navController,
+                jobs = jobsState,
+                onDeleteJob = { jobId -> jobViewModel.deleteJob(jobId) }
+            )
         }
+
 
         composable(Screen.CompanyProfile.route) {
             CompanyProfile()
         }
 
-        composable(Screen.ProgresView.route) { backStackEntry ->
+        composable(Screen.JobHistoryCompanyView.route) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
             val jobsState by jobViewModel.jobs.collectAsState()
 
             val job = jobsState.find { it.id == jobId }
             if (job != null) {
-                ProgressView(job = job, navController = navController)
+                JobHistoryCompanyView(job = job, navController = navController)
             } else {
                 Text(text = "Job not found!")
             }

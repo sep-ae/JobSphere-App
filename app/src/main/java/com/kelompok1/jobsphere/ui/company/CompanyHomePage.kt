@@ -194,20 +194,6 @@ fun MainContent(
                 }
             }
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("addJobPage") },
-                shape = RoundedCornerShape(50),
-                containerColor = Color(0xFF134B70)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Icon",
-                    tint = Color.White,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
-        },
         content = { innerPadding ->
             Box(modifier = Modifier.fillMaxSize()) {
                 // Main content in the Box
