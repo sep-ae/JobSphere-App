@@ -36,6 +36,7 @@ import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.data.model.NavigationItem
 import com.kelompok1.jobsphere.data.model.isOpened
 import com.kelompok1.jobsphere.data.model.opposite
+import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProfile
 import com.kelompok1.jobsphere.ui.components.CustomDrawer
 import com.kelompok1.jobsphere.ui.components.LazyColumnJob
 import com.kelompok1.jobsphere.ui.components.LazyRowJob
@@ -184,8 +185,8 @@ fun MainContent(
                             onSelectedItem(index)
                             when (index) {
                                 0 -> onDrawerClick(drawerState.opposite())
-                                1 -> navController.navigate(Screen.JobHistoryCompany.route)
-                                2 -> navController.navigate(Screen.CompanyProfile.route)
+                                1 -> navController.navigate(Screen.JobSeekerHistory.route)
+                                2 -> navController.navigate(Screen.JobSeekerProfile.route)
                             }
                         },
                         selectedContentColor = Color.Cyan,
