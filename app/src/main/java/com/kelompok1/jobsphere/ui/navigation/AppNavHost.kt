@@ -4,9 +4,11 @@ import JobHistoryCompany
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,12 +17,18 @@ import com.kelompok1.jobsphere.ViewModel.AuthState
 import com.kelompok1.jobsphere.ViewModel.AuthViewModel
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
+import com.kelompok1.jobsphere.ViewModel.ProfileViewModel
+import com.kelompok1.jobsphere.ViewModel.CompanyProfileViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
 import com.kelompok1.jobsphere.ui.company.CompanyProfile
+import com.kelompok1.jobsphere.ui.company.EditCompanyProfile
 import com.kelompok1.jobsphere.ui.company.JobHistoryCompanyView
 import com.kelompok1.jobsphere.ui.company.JobView
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
+import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProfile
+import com.kelompok1.jobsphere.ui.jobseeker.EditJobSeekerProfile
+import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHistory
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
 import com.kelompok1.jobsphere.ui.screen.RegisterPage
@@ -37,6 +45,8 @@ fun AppNavHost(
 ) {
     // Observasi status autentikasi dari ViewModel
     val authState by authViewModel.authState.observeAsState()
+    val profileViewModel: ProfileViewModel = viewModel()
+    val companyProfileViewModel: CompanyProfileViewModel = viewModel()
 
     // Tentukan rute awal berdasarkan status autentikasi
     val startDestination = when (authState) {
@@ -74,6 +84,23 @@ fun AppNavHost(
                 scope = scope
             )
         }
+        composable("jobSeekerProfile") {
+            val profileViewModel: ProfileViewModel = viewModel()
+            JobSeekerProfile(
+                viewModel = profileViewModel,
+                navController = navController
+            )
+        }
+        composable("editJobSeekerProfile") {
+            EditJobSeekerProfile(
+                viewModel = profileViewModel,
+                navController = navController
+            )
+        }
+        composable("JobSeekerHistory") {
+            JobSeekerHistory()
+        }
+
 
         // Routing Company
         composable(Screen.CompanyHomePage.route) { backStackEntry ->
@@ -100,8 +127,6 @@ fun AppNavHost(
             )
         }
 
-
-
         composable(Screen.JobHistoryCompany.route) {
             val jobsState by jobViewModel.jobs.collectAsState()
 
@@ -112,10 +137,25 @@ fun AppNavHost(
             )
         }
 
-
-        composable(Screen.CompanyProfile.route) {
-            CompanyProfile()
+        composable("companyProfile/{companyId}") { backStackEntry ->
+            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
+            CompanyProfile(
+                navController = navController,
+                companyId = companyId,
+                viewModel = companyProfileViewModel
+            )
         }
+
+        composable("editCompanyProfile/{companyId}") { backStackEntry ->
+            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
+            EditCompanyProfile(
+                navController = navController,
+                companyId = companyId,
+                viewModel = companyProfileViewModel
+            )
+        }
+
+
 
         composable(Screen.JobHistoryCompanyView.route) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getString("jobId") ?: ""

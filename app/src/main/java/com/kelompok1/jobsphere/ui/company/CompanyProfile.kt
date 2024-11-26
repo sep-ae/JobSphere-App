@@ -1,188 +1,116 @@
 package com.kelompok1.jobsphere.ui.company
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.kelompok1.jobsphere.R
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.kelompok1.jobsphere.ViewModel.CompanyProfileViewModel
 
 @Composable
-fun CompanyProfile() {
-    val scrollState = rememberScrollState()
+fun CompanyProfile(
+    navController: NavController,
+    companyId: String,
+    viewModel: CompanyProfileViewModel
+) {
+    val profile by viewModel.companyProfileState.collectAsState()
+
+    LaunchedEffect(companyId) {
+        viewModel.fetchCompanyProfile(companyId)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .background(Color.White)
+            .background(Color(0xFFE9EDF1))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header with Background Image and Photo Profile
-        HeaderSection()
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Editable Sections
-        EditableProfileSection(title = "Description", initialValue = "Lorem Ipsum is simply dummy text...")
-        EditableProfileSection(title = "Industrial Sector", initialValue = "Technology")
-        EditableProfileSection(title = "Vision and Mission", initialValue = "To innovate and lead the market...")
-
-        Spacer(modifier = Modifier.height(16.dp))
-        // Documentation Section
-        DocumentationSection()
-        Spacer(modifier = Modifier.height(16.dp))
-        EditableProfileSection(title = "Vision and Mission", initialValue = "To innovate and lead the market...")
-        EditableProfileSection(title = "Vision and Mission", initialValue = "To innovate and lead the market...")
-
-
-    }
-}
-
-@Composable
-fun HeaderSection() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp) // Tentukan tinggi untuk header
-            .background(Color.LightGray)
-    ) {
-        // Background Image
-        Image(
-            painter = painterResource(id = R.drawable.logo), // Ganti dengan gambar latar
-            contentDescription = "Background Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        // Informasi Perusahaan
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Company's Name",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Address",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
-            )
-        }
-
-        // Foto Profil (Ditempatkan di tengah bawah header dengan overlap)
+        // Bagian Header
         Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter) // Menempatkan di tengah bawah
-                .offset(y = 40.dp) // Geser ke bawah agar keluar dari background image
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(Color(0xFF2E89FF), shape = RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo), // Ganti dengan foto profil perusahaan
-                contentDescription = "Company Logo",
-                modifier = Modifier
-                    .size(100.dp) // Ukuran foto profil
-                    .background(Color.Gray, CircleShape) // Membentuk lingkaran dengan latar abu-abu
-                    .padding(4.dp) // Padding di dalam lingkaran
-            )
-        }
-    }
-}
-
-@Composable
-fun EditableProfileSection(title: String, initialValue: String) {
-    val isEditing = remember { mutableStateOf(false) } // State untuk mengontrol mode edit
-    val textFieldState = remember { mutableStateOf(initialValue) } // State untuk menyimpan nilai teks
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        // Bagian judul
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Black
-            )
-            IconButton(
-                onClick = { isEditing.value = !isEditing.value }, // Mengubah mode edit
-                modifier = Modifier.size(24.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_edit_24), // Ikon pena (edit)
-                    contentDescription = "Edit $title",
-                    tint = Color.Blue
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .background(Color.White, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Placeholder untuk foto profil
+                    Text(
+                        text = "Logo",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF2E89FF)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = profile.name ?: "Company Name",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = profile.email ?: "Email",
+                    fontSize = 14.sp,
+                    color = Color.White
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Mode edit atau hanya menampilkan teks
-        if (isEditing.value) {
-            OutlinedTextField(
-                value = textFieldState.value,
-                onValueChange = { textFieldState.value = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = "Enter $title...",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-                }
-            )
-        } else {
-            Text(
-                text = textFieldState.value.ifEmpty { "No $title provided" },
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray
-            )
+        // Bagian Deskripsi dan Informasi Perusahaan
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp)
+        ) {
+            ProfileInfoItem("Address", profile.address ?: "Address not available")
+            ProfileInfoItem("Phone", profile.phone ?: "Phone not available")
+            ProfileInfoItem("Description", profile.description ?: "Description not available")
+            ProfileInfoItem("Industrial Sector", profile.industrialSector ?: "Sector not available")
+            ProfileInfoItem("Vision and Mission", profile.visionAndMission ?: "Vision and Mission not available")
+            ProfileInfoItem("Benefits and Facilities", profile.benefitsAndFacilities ?: "Not available")
+            ProfileInfoItem("Social Media", profile.socialMedia ?: "Social Media not available")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Tombol Edit Profil
+        Button(
+            onClick = { navController.navigate("editCompanyProfile/$companyId") },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E89FF))
+        ) {
+            Text("Edit Profile", color = Color.White)
         }
     }
 }
 
 @Composable
-fun DocumentationSection() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
-            text = "Documentation",
-            style = MaterialTheme.typography.bodyLarge,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = { /* TODO: Add documentation action */ },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-        ) {
-            Text(
-                text = "Add Documentation",
-                color = Color.White
-            )
-        }
+fun ProfileInfoItem(label: String, value: String) {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Text(text = label, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Gray)
+        Text(text = value, fontSize = 16.sp, color = Color.Black)
     }
 }
