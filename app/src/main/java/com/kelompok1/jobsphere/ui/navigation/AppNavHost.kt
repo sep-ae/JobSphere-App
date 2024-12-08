@@ -21,14 +21,11 @@ import com.kelompok1.jobsphere.ViewModel.ProfileViewModel
 import com.kelompok1.jobsphere.ViewModel.CompanyProfileViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
-import com.kelompok1.jobsphere.ui.company.CompanyProfile
-import com.kelompok1.jobsphere.ui.company.EditCompanyProfile
 import com.kelompok1.jobsphere.ui.company.JobHistoryCompanyView
 import com.kelompok1.jobsphere.ui.company.JobView
+import com.kelompok1.jobsphere.ui.jobseeker.CompanyProfileScreen
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProfile
-import com.kelompok1.jobsphere.ui.jobseeker.EditJobSeekerProfile
-import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHistory
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
 import com.kelompok1.jobsphere.ui.screen.RegisterPage
@@ -91,16 +88,6 @@ fun AppNavHost(
                 navController = navController
             )
         }
-        composable("editJobSeekerProfile") {
-            EditJobSeekerProfile(
-                viewModel = profileViewModel,
-                navController = navController
-            )
-        }
-        composable("JobSeekerHistory") {
-            JobSeekerHistory()
-        }
-
 
         // Routing Company
         composable(Screen.CompanyHomePage.route) { backStackEntry ->
@@ -137,25 +124,15 @@ fun AppNavHost(
             )
         }
 
-        composable("companyProfile/{companyId}") { backStackEntry ->
-            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
-            CompanyProfile(
-                navController = navController,
-                companyId = companyId,
-                viewModel = companyProfileViewModel
+        composable(Screen.CompanyProfile.route) {
+            // Mendapatkan ViewModel tanpa menggunakan Hilt
+            val companyProfileViewModel: CompanyProfileViewModel = viewModel()
+
+            CompanyProfileScreen(
+                viewModel = companyProfileViewModel,// Tambahkan navController di sini
+                navController = navController
             )
         }
-
-        composable("editCompanyProfile/{companyId}") { backStackEntry ->
-            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
-            EditCompanyProfile(
-                navController = navController,
-                companyId = companyId,
-                viewModel = companyProfileViewModel
-            )
-        }
-
-
 
         composable(Screen.JobHistoryCompanyView.route) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getString("jobId") ?: ""

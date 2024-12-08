@@ -15,8 +15,8 @@ enum class NavigationItem(
         title = "Profile"
     ),
     Premium(
-        icon = R.drawable.baseline_diamond_24,
-        title = "Premium"
+        icon = R.drawable.baseline_card_travel_24,
+        title = "History"
     ),
     Settings(
         icon = R.drawable.baseline_setting_24,
