@@ -34,7 +34,6 @@ import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProfile
 import com.kelompok1.jobsphere.ui.jobseeker.EditJobSeekerProfile
 import com.kelompok1.jobsphere.ui.jobseeker.JobCategoryView
 import com.kelompok1.jobsphere.ui.jobseeker.JobDetailView
-import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHistory
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProgress
 import com.kelompok1.jobsphere.ui.jobseeker.JobseekerNotification
 import com.kelompok1.jobsphere.ui.screen.ExploreJob
@@ -129,9 +128,6 @@ fun AppNavHost(
                 viewModel = profileViewModel,
                 navController = navController
             )
-        }
-        composable("JobSeekerHistory") {
-            JobSeekerHistory()
         }
 
         composable("ApplicationHistory") {
