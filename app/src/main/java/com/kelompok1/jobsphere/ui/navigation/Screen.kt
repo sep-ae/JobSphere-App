@@ -11,10 +11,6 @@ sealed class Screen(val route: String) {
         fun createRoute(username: String) = "jobSeekerHomePage/$username"
     }
     object JobSeekerProfile : Screen("jobSeekerProfile")
-    object EditJobSeekerProfile : Screen("editJobSeekerProfile/{userId}") {
-        fun createRoute(userId: String) = "editJobSeekerProfile/$userId"
-    }
-    object JobSeekerHistory : Screen("jobSeekerHistory")
 
     // Object Company
     object CompanyHomePage : Screen("companyHomePage/{username}") {
@@ -22,13 +18,8 @@ sealed class Screen(val route: String) {
     }
     object AddJobPage : Screen("addJobPage")
     object JobHistoryCompany : Screen("jobHistoryCompany")
-    object CompanyProfile : Screen("companyProfile/{companyId}") {
-        fun createRoute(companyId: String) = "companyProfile/$companyId"
-    }
+    object CompanyProfile : Screen("companyProfile")
 
-    object EditCompanyProfile : Screen("editCompanyProfile/{companyId}") {
-        fun createRoute(companyId: String) = "editCompanyProfile/$companyId"
-    }
     object JobHistoryCompanyView : Screen("jobHistoryCompanyView/{jobId}") {
         fun createRoute(jobId: String) = "jobHistoryCompanyView/$jobId"
     }
