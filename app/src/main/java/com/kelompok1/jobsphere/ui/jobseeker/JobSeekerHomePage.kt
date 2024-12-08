@@ -185,7 +185,7 @@ fun MainContent(
                             onSelectedItem(index)
                             when (index) {
                                 0 -> onDrawerClick(drawerState.opposite())
-                                1 -> navController.navigate(Screen.JobSeekerHistory.route)
+                                1 -> navController.navigate(Screen.JobHistoryCompany.route)
                                 2 -> navController.navigate(Screen.JobSeekerProfile.route)
                             }
                         },
