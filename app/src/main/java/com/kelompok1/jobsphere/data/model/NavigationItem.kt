@@ -14,9 +14,9 @@ enum class NavigationItem(
         icon = R.drawable.baseline_person_24,
         title = "Profile"
     ),
-    Premium(
-        icon = R.drawable.baseline_diamond_24,
-        title = "Premium"
+    Progress(
+        icon = R.drawable.baseline_access_time_24,
+        title = "Progres"
     ),
     Settings(
         icon = R.drawable.baseline_setting_24,
