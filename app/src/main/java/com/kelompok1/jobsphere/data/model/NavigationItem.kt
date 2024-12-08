@@ -15,7 +15,7 @@ enum class NavigationItem(
         title = "Profile"
     ),
     Premium(
-        icon = R.drawable.baseline_card_travel_24,
+        icon = R.drawable.baseline_person_24,
         title = "History"
     ),
     Settings(
@@ -25,5 +25,9 @@ enum class NavigationItem(
     Logout(
         icon = R.drawable.baseline_logout_24,
         title = "Logout"
+    ),
+    Progress(
+        icon = R.drawable.baseline_access_time_24,
+        title = "Progres"
     )
 }

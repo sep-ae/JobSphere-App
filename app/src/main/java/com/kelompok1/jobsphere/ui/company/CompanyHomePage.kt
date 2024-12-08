@@ -1,6 +1,7 @@
 package com.kelompok1.jobsphere.ui.company
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -11,11 +12,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LockClock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
+import com.kelompok1.jobsphere.ViewModel.UserRole
 import com.kelompok1.jobsphere.data.model.CustomDrawerState
 import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.data.model.NavigationItem
@@ -57,6 +57,7 @@ fun CompanyHomePage(
     var drawerState by remember { mutableStateOf(CustomDrawerState.Closed) }
     var selectedNavigationItem by remember { mutableStateOf(NavigationItem.Home) }
     var selectedItem by remember { mutableStateOf(0) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current.density
@@ -74,17 +75,20 @@ fun CompanyHomePage(
         label = "Animated Scale"
     )
 
-    val jobsState = jobViewModel.jobs.collectAsState()
-    val jobs = jobsState.value
+    val jobsState by jobViewModel.jobs.collectAsState()
+    val filteredJobsState by jobViewModel.filteredJobs.collectAsState()
 
-    LaunchedEffect(Unit) {
-        jobViewModel.fetchJobs(forCompany = true)
+    val jobs = if (searchQuery.isNotEmpty()) filteredJobsState else jobsState
+
+    Log.d("CompanyHomePage", "Jobs state in UI: $jobsState")
+
+    if (jobs.isEmpty() && searchQuery.isEmpty()) {
+        jobViewModel.fetchJobs(UserRole.Company)
     }
 
-    fun handleLogout(navController: NavController, userViewModel: UserViewModel) {
-        // Proses logout Firebase
+    fun handleLogout(navController: NavController, userViewModel: UserViewModel, jobViewModel: JobViewModel) {
         userViewModel.logoutUser()
-
+        jobViewModel.resetJobState()
         navController.navigate("login") {
             popUpTo(0) { inclusive = true }
         }
@@ -107,7 +111,7 @@ fun CompanyHomePage(
             onNavigationItemClick = { navigationItem ->
                 when (navigationItem) {
                     NavigationItem.Logout -> {
-                        handleLogout(navController, userViewModel)
+                        handleLogout(navController, userViewModel, jobViewModel)
                     }
                     else -> {
                         selectedNavigationItem = navigationItem
@@ -132,10 +136,17 @@ fun CompanyHomePage(
             navController = navController,
             selectedItem = selectedItem,
             onSelectedItem = { index -> selectedItem = index },
-            jobs = jobs
+            jobs = jobs,
+            jobViewModel = jobViewModel,
+            searchQuery = searchQuery,
+            onSearchQueryChange = { query ->
+                searchQuery = query
+                jobViewModel.searchJobs(query)
+            }
         )
     }
 }
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -147,7 +158,10 @@ fun MainContent(
     navController: NavController,
     selectedItem: Int,
     onSelectedItem: (index: Int) -> Unit,
-    jobs: List<Job>
+    jobs: List<Job>,
+    jobViewModel: JobViewModel,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -202,8 +216,15 @@ fun MainContent(
                         .fillMaxSize()
                         .padding(innerPadding)
                 ) {
-                    SearchBarComponent()
-
+                    SearchBarComponent(
+                        role = UserRole.Company,
+                        jobViewModel = jobViewModel,
+                        onNavigateToJobDetail = {  },
+                        onNavigateToJobView = { jobId -> navController.navigate("JobView/$jobId") },
+                        query = searchQuery,
+                        onQueryChange = onSearchQueryChange,
+                        onNotificationClick = { /* Handle notification action */ }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(

@@ -52,7 +52,7 @@ fun NavigationItemView(
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = navigationItem.title,
-            color = if (selected) Color.Black // Teks juga menjadi putih jika dipilih
+            color = if (selected) Color.Black
             else Color.White,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
             lineHeight = 20.sp
