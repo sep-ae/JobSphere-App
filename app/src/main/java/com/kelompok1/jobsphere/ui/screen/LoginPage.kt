@@ -1,10 +1,14 @@
 package com.kelompok1.jobsphere.ui.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -15,9 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -83,26 +91,36 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header with JobSphere title and back icon
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            horizontalAlignment = Alignment.Start
+            verticalAlignment = Alignment.CenterVertically // Untuk memastikan ikon dan teks sejajar secara vertikal
         ) {
+            Icon(
+                imageVector = Icons.Filled.ChevronLeft,
+                contentDescription = "Back",
+                modifier = Modifier
+                    .clickable { navController.popBackStack() } // Kembali ke layar sebelumnya (Landing)
+                    .size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(85.dp)) // Memberikan jarak horizontal antara ikon dan teks
+
             androidx.compose.material.Text(
                 text = "JobSphere",
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontFamily = RighteousFamily,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
             )
         }
 
         Spacer(modifier = Modifier.height(120.dp))
 
         androidx.compose.material.Text(
-            text = "Sign Up",
-            fontSize = 20.sp,
+            text = "Sign In",
+            fontSize = 18.sp,
             fontFamily = RighteousFamily,
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center,
@@ -170,15 +188,16 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
                 authViewModel.login(email, password) // Mulai proses login
                 isLoginAttempted = true
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF201E43))
         ) {
-            Text("SignUp")
+            Text("Sign In",  color = Color.White)
         }
 
-        Spacer(modifier = Modifier.height(230.dp))
+        Spacer(modifier = Modifier.height(210.dp))
 
         TextButton(onClick = { navController.navigate("register") }) {
-            Text(text = "Don’t have an account? Register")
+                Text("Don’t have an account? ", color = Color.Black)
+                Text("Register", color = Color.Blue)
         }
     }
 }

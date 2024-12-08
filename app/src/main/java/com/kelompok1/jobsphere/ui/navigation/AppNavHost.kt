@@ -123,13 +123,6 @@ fun AppNavHost(
                 navController = navController
             )
         }
-        composable("editJobSeekerProfile") {
-            EditJobSeekerProfile(
-                viewModel = profileViewModel,
-                navController = navController
-            )
-        }
-
         composable("ApplicationHistory") {
             ApplicationHistory(
                 jobViewModel = jobViewModel,
@@ -221,21 +214,13 @@ fun AppNavHost(
             )
         }
 
-        composable("companyProfile/{companyId}") { backStackEntry ->
-            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
-            CompanyProfile(
-                navController = navController,
-                companyId = companyId,
-                viewModel = companyProfileViewModel
-            )
-        }
+        composable(Screen.CompanyProfile.route) {
+            // Mendapatkan ViewModel tanpa menggunakan Hilt
+            val companyProfileViewModel: CompanyProfileViewModel = viewModel()
 
-        composable("editCompanyProfile/{companyId}") { backStackEntry ->
-            val companyId = backStackEntry.arguments?.getString("companyId") ?: ""
-            EditCompanyProfile(
-                navController = navController,
-                companyId = companyId,
-                viewModel = companyProfileViewModel
+            CompanyProfileScreen(
+                viewModel = companyProfileViewModel,// Tambahkan navController di sini
+                navController = navController
             )
         }
 
