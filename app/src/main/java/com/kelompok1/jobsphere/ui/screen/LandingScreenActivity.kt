@@ -49,7 +49,7 @@ fun LandingScreen(
         Spacer(modifier = Modifier.height(100.dp))
 
         Button(
-            onClick = { navController.navigate("home") },
+            onClick = { navController.navigate("ExploreJob") },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))
         ) {
