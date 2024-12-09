@@ -113,7 +113,6 @@ fun JobSeekerHomePage(
                     NavigationItem.Profile -> navController.navigate(Screen.JobSeekerProfile.route)
                     NavigationItem.Progress -> navController.navigate(Screen.JobSeekerProgress.route)
                     NavigationItem.Settings -> navController.navigate(Screen.SettingsScreen.route)
-                    NavigationItem.Premium -> navController.navigate(Screen.SettingsScreen.route)
                     NavigationItem.Logout -> {
                         handleLogout(navController, userViewModel, jobViewModel)
                     }

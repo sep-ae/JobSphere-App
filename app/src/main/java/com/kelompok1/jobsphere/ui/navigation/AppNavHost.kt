@@ -23,15 +23,13 @@ import com.kelompok1.jobsphere.ViewModel.ProfileViewModel
 import com.kelompok1.jobsphere.ViewModel.CompanyProfileViewModel
 import com.kelompok1.jobsphere.ui.company.AddJobPage
 import com.kelompok1.jobsphere.ui.company.CompanyHomePage
-import com.kelompok1.jobsphere.ui.company.CompanyProfile
-import com.kelompok1.jobsphere.ui.company.EditCompanyProfile
 import com.kelompok1.jobsphere.ui.company.JobHistoryCompany
 import com.kelompok1.jobsphere.ui.company.JobHistoryCompanyView
 import com.kelompok1.jobsphere.ui.company.JobView
 import com.kelompok1.jobsphere.ui.jobseeker.ApplicationHistory
+import com.kelompok1.jobsphere.ui.jobseeker.CompanyProfileScreen
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerHomePage
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProfile
-import com.kelompok1.jobsphere.ui.jobseeker.EditJobSeekerProfile
 import com.kelompok1.jobsphere.ui.jobseeker.JobCategoryView
 import com.kelompok1.jobsphere.ui.jobseeker.JobDetailView
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProgress
