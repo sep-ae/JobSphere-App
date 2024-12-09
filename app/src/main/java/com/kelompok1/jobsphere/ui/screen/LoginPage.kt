@@ -101,7 +101,7 @@ fun LoginPage(navController: NavController, modifier: Modifier = Modifier, authV
                 imageVector = Icons.Filled.ChevronLeft,
                 contentDescription = "Back",
                 modifier = Modifier
-                    .clickable { navController.popBackStack() } // Kembali ke layar sebelumnya (Landing)
+                    .clickable { navController.navigate("landing") } // Kembali ke layar sebelumnya (Landing)
                     .size(24.dp)
             )
 

@@ -9,9 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ui.navigation.Screen
 import com.kelompok1.jobsphere.ui.theme.DarkBlue
+import com.kelompok1.jobsphere.ui.theme.RighteousFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,41 +23,35 @@ fun GuestPage(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // Column for main content
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(),
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Welcome to JobSphere",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 32.dp)
+                text = "JobSphere",
+                fontSize = 16.sp,
+                fontFamily = RighteousFamily
             )
 
-            // Login Button with height set to 50dp
+            Spacer(modifier = Modifier.height(100.dp))
+
             Button(
-                onClick = { navController.navigate(Screen.Login.route) },
-                modifier = Modifier
-                    .fillMaxWidth()  // Make the button width fill the available space
-                    .height(50.dp)   // Set height to 50dp
-                    .padding(bottom = 16.dp),
-                shape = MaterialTheme.shapes.medium  // Rounded button
+                onClick = { navController.navigate("login") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))
             ) {
-                Text(text = "Login")
+                Text("Login", color = Color.White, fontSize = 12.sp)
             }
 
-            // Register Button with height set to 50dp
             Button(
-                onClick = { navController.navigate(Screen.Register.route) },
-                modifier = Modifier
-                    .fillMaxWidth()  // Make the button width fill the available space
-                    .height(50.dp)   // Set height to 50dp
-                    .padding(bottom = 16.dp),
-                shape = MaterialTheme.shapes.medium  // Rounded button
+                onClick = { navController.navigate("register") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6A0DAD))
             ) {
-                Text(text = "Register")
+                Text("Register", color = Color.White, fontSize = 12.sp)
             }
         }
 
