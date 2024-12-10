@@ -19,12 +19,14 @@ import com.kelompok1.jobsphere.ui.navigation.Screen
 import com.kelompok1.jobsphere.ui.theme.JobSphereTheme
 import androidx.compose.runtime.livedata.observeAsState
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
+import com.kelompok1.jobsphere.ViewModel.ApplicationViewModel
 
 class MainActivity : ComponentActivity() {
 
     private val authViewModel: AuthViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
     private val jobViewModel: JobViewModel by viewModels()
+    private val applicationViewModel: ApplicationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +90,7 @@ class MainActivity : ComponentActivity() {
                     authViewModel = authViewModel,
                     userViewModel = userViewModel,
                     jobViewModel = jobViewModel,
+                    applicationViewModel = applicationViewModel,
                     drawerState = drawerState,
                     scope = scope
                 )

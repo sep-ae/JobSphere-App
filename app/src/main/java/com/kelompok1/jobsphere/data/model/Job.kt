@@ -10,5 +10,7 @@ data class Job(
     val salary: Double = 0.0,
     val qualifications: List<String> = emptyList(),
     val jobType: String = "Full-Time",
-    val deadline: Long = System.currentTimeMillis()
+    val deadline: Long = System.currentTimeMillis(),
+    val jobCategory: String = "",
+    val minEducation: String= ""
 )

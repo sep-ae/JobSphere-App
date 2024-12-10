@@ -2,76 +2,102 @@ package com.kelompok1.jobsphere.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class CompanyProfileViewModel : ViewModel() {
-    private val db = FirebaseFirestore.getInstance()
 
-    private val _companyProfileState = MutableStateFlow(
-        CompanyProfile(
-            name = "", email = "", address = "", phone = "",
-            description = "", industrialSector = "",
-            visionAndMission = "", benefitsAndFacilities = "",
-            socialMedia = ""
-        )
-    )
+    // Inisialisasi FirebaseAuth dan FirebaseFirestore
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    // StateFlow untuk menyimpan state profil perusahaan
+    private val _companyProfileState = MutableStateFlow(CompanyProfile())
     val companyProfileState: StateFlow<CompanyProfile> = _companyProfileState
 
-    fun fetchCompanyProfile(companyId: String) {
-        viewModelScope.launch {
-            db.collection("companyProfiles")
-                .document(companyId)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val name = document.getString("name") ?: ""
-                        val email = document.getString("email") ?: ""
-                        val address = document.getString("address") ?: ""
-                        val phone = document.getString("phone") ?: ""
-                        val description = document.getString("description") ?: ""
-                        val industrialSector = document.getString("industrialSector") ?: ""
-                        val visionAndMission = document.getString("visionAndMission") ?: ""
-                        val benefitsAndFacilities = document.getString("benefitsAndFacilities") ?: ""
-                        val socialMedia = document.getString("socialMedia") ?: ""
-                        _companyProfileState.value = CompanyProfile(
-                            name, email, address, phone, description,
-                            industrialSector, visionAndMission,
-                            benefitsAndFacilities, socialMedia
-                        )
-                    }
+    // StateFlow untuk username dan email
+    private val _username = MutableStateFlow("")
+    val username: StateFlow<String> = _username
+
+    private val _useremail = MutableStateFlow("")
+    val useremail: StateFlow<String> = _useremail
+
+    fun fetchUserProfile() {
+        val userId = auth.currentUser?.uid ?: return
+        db.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    _username.value = document.getString("username") ?: ""
+                    _useremail.value = document.getString("email") ?: ""
                 }
-        }
+            }
+            .addOnFailureListener { exception ->
+                println("Error fetching user profile: $exception")
+            }
     }
 
-    fun saveCompanyProfile(companyId: String, profile: CompanyProfile) {
-        viewModelScope.launch {
-            val profileData = mapOf(
-                "name" to profile.name,
-                "email" to profile.email,
-                "address" to profile.address,
-                "phone" to profile.phone,
-                "description" to profile.description,
-                "industrialSector" to profile.industrialSector,
-                "visionAndMission" to profile.visionAndMission,
-                "benefitsAndFacilities" to profile.benefitsAndFacilities,
-                "socialMedia" to profile.socialMedia
-            )
-            db.collection("companyProfiles").document(companyId).set(profileData)
-        }
+    fun fetchCompanyProfile() {
+        val userId = auth.currentUser?.uid ?: return
+        db.collection("company").document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    _companyProfileState.value = CompanyProfile(
+                        username = document.getString("username") ?: "",
+                        email = document.getString("email") ?: "",
+                        telephone = document.getString("telephone") ?: "",
+                        address = document.getString("address") ?: "",
+                        description = document.getString("description") ?: "",
+                        industrialSector = document.getString("industrialSector") ?: "",
+                        visionAndMission = document.get("visionAndMission") as? List<String> ?: listOf(),
+                        benefitsAndFacilities = document.get("benefitsAndFacilities") as? List<String> ?: listOf(),
+                        socialMedia = document.get("socialMedia") as? List<String> ?: listOf()
+                    )
+                }
+            }
+            .addOnFailureListener { exception ->
+                println("Error fetching profile: $exception")
+            }
+    }
+
+    fun saveProfile(profile: CompanyProfile) {
+        val userId = auth.currentUser?.uid ?: return
+        val profileData = mapOf(
+            "username" to profile.username,
+            "email" to profile.email,
+            "telephone" to profile.telephone,
+            "address" to profile.address,
+            "description" to profile.description,
+            "industrialSector" to profile.industrialSector,
+            "visionAndMission" to profile.visionAndMission,
+            "benefitsAndFacilities" to profile.benefitsAndFacilities,
+            "socialMedia" to profile.socialMedia
+        )
+        db.collection("company").document(userId)
+            .set(profileData)
+            .addOnSuccessListener {
+                _companyProfileState.value = profile
+            }
+            .addOnFailureListener { exception ->
+                println("Error saving profile: $exception")
+            }
     }
 }
 
 data class CompanyProfile(
-    val name: String,
-    val email: String,
-    val address: String,
-    val phone: String,
-    val description: String,
-    val industrialSector: String,
-    val visionAndMission: String,
-    val benefitsAndFacilities: String,
-    val socialMedia: String
+    val username: String = "",
+    val email: String = "",
+    val telephone: String = "",
+    val address: String = "",
+    val description: String = "",
+    val industrialSector: String = "", // Ganti menjadi List<String>
+    val visionAndMission: List<String> = listOf(),     // Ganti menjadi List<String>
+    val benefitsAndFacilities: List<String> = listOf(),         // Ganti menjadi List<String>
+    val socialMedia: List<String> = listOf()       // Ganti menjadi List<String>
 )
+
+

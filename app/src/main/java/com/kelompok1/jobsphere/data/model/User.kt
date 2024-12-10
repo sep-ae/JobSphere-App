@@ -1,4 +1,4 @@
-package com.kelompok1.jobsphere.data
+package com.kelompok1.jobsphere.data.model
 
 data class User(
     val username: String = "",

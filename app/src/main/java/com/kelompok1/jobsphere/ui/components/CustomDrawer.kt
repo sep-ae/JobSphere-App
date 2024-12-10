@@ -65,7 +65,7 @@ fun CustomDrawer(
         Spacer(modifier = Modifier.height(20.dp))
         Text(text = "$username", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(modifier = Modifier.height(40.dp))
-        NavigationItem.entries.toTypedArray().take(3).forEach { navigationItem ->
+        NavigationItem.entries.toTypedArray().take(4).forEach { navigationItem ->
             NavigationItemView(
                 navigationItem = navigationItem,
                 selected = navigationItem == selectedNavigationItem,

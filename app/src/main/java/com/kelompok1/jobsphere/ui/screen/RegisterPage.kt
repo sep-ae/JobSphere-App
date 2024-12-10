@@ -88,26 +88,28 @@ fun RegisterPage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Header with JobSphere title and back icon
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            horizontalAlignment = Alignment.Start
+            verticalAlignment = Alignment.CenterVertically // Untuk memastikan ikon dan teks sejajar secara vertikal
         ) {
             Icon(
                 imageVector = Icons.Filled.ChevronLeft,
                 contentDescription = "Back",
                 modifier = Modifier
-                    .clickable { navController.popBackStack() } // Back to previous screen (Landing)
+                    .clickable { navController.popBackStack() } // Kembali ke layar sebelumnya (Landing)
                     .size(24.dp)
             )
 
-            Text(
+            Spacer(modifier = Modifier.width(85.dp)) // Memberikan jarak horizontal antara ikon dan teks
+
+            androidx.compose.material.Text(
                 text = "JobSphere",
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontFamily = RighteousFamily,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
             )
         }
 
@@ -139,8 +141,8 @@ fun RegisterPage(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                textStyle = MaterialTheme.typography.body1.copy(fontSize = 14.sp)
+                    .height(56.dp),
+                textStyle = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
             )
         }
 
@@ -161,7 +163,7 @@ fun RegisterPage(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 textStyle = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
                 isError = emailError.isNotEmpty()
             )
@@ -192,7 +194,7 @@ fun RegisterPage(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 textStyle = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -230,7 +232,7 @@ fun RegisterPage(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 textStyle = MaterialTheme.typography.body1.copy(fontSize = 14.sp),
                 visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -288,7 +290,10 @@ fun RegisterPage(
                 },
                 modifier = Modifier.weight(1f),
                 enabled = agreeToTerms,
-                shape = RoundedCornerShape(50.dp)
+                shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF201E43),
+                    contentColor = Color.White)
             ) {
                 Text("Job Seeker")
             }
@@ -302,7 +307,10 @@ fun RegisterPage(
                 },
                 modifier = Modifier.weight(1f),
                 enabled = agreeToTerms,
-                shape = RoundedCornerShape(50.dp)
+                shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF201E43),
+                    contentColor = Color.White)
             ) {
                 Text("Company")
             }
