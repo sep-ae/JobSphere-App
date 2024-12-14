@@ -108,7 +108,14 @@ class ApplicationViewModel : ViewModel() {
 
     // Listen for application status updates in Firestore (from Company)
     fun listenForStatusUpdates() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Log.e("ApplicationViewModel", "User not logged in.")
+            return
+        }
+
         firestore.collection("applications")
+            .whereEqualTo("userId", userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e("ApplicationViewModel", "Error listening to status updates: ${error.message}")
