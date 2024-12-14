@@ -154,8 +154,7 @@ fun AppNavHost(
                     job = job,
                     navController = navController,
                     applicationViewModel = applicationViewModel,
-                    userViewModel = userViewModel,
-                    isGuest = isGuest // Kirim nilai `isGuest` ke JobDetailView
+                    userViewModel = userViewModel
                 )
             } else {
                 Text(

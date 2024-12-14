@@ -42,11 +42,10 @@ fun JobDetailView(
     job: Job,
     navController: NavController,
     applicationViewModel: ApplicationViewModel,
-    userViewModel: UserViewModel,
-    isGuest: Boolean // Tambahkan parameter untuk memeriksa apakah user adalah tamu
+    userViewModel: UserViewModel
 ) {
     var isDialogOpen by remember { mutableStateOf(false) }
-    val hasApplied = if (!isGuest) applicationViewModel.hasApplied(job.id) else false
+    val hasApplied = applicationViewModel.hasApplied(job.id)
 
     Scaffold(
         topBar = {
@@ -55,11 +54,7 @@ fun JobDetailView(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (isGuest) {
-                                navController.navigate(Screen.ExploreJob.route) // Navigasi ke `ExploreJob` jika tamu
-                            } else {
-                                navController.navigate(Screen.JobSeekerHomePage.route) // Navigasi ke homepage untuk jobseeker
-                            }
+                                navController.navigate(Screen.JobSeekerHomePage.route)
                         }
                     ) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -223,7 +218,7 @@ fun JobDetailView(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Apply Button
-            if (!isGuest && !hasApplied) {
+            if (!hasApplied) {
                 Button(
                     onClick = { isDialogOpen = true },
                     modifier = Modifier

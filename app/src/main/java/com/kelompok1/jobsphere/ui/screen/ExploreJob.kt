@@ -34,7 +34,6 @@ fun ExploreJob(
 
     val jobs = if (searchQuery.isNotEmpty()) filteredJobsState else jobsState
 
-    // Fetch jobs jika belum ada data
     if (jobs.isEmpty() && searchQuery.isEmpty()) {
         jobViewModel.fetchJobs(UserRole.Guest)
     }
@@ -60,7 +59,7 @@ fun ExploreJob(
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             SearchBarComponent(
-                role = UserRole.Guest, // You can modify this role if needed
+                role = UserRole.Guest,
                 jobViewModel = jobViewModel,
                 onNavigateToJobDetail = { jobId -> navController.navigate("JobDetailView/$jobId") },
                 onNavigateToJobView = { /* Not needed for JobSeeker */ },
