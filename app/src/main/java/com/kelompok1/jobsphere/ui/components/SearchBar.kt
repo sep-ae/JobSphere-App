@@ -51,10 +51,10 @@ fun SearchBarComponent(
     ) {
         SearchBar(
             query = query,
-            onQueryChange = onQueryChange, // Pass the callback to update query externally
+            onQueryChange = onQueryChange,
             onSearch = { searchQuery ->
                 onQueryChange(searchQuery)
-                jobViewModel.searchJobs(searchQuery) // Perform final search
+                jobViewModel.searchJobs(searchQuery)
             },
             active = active,
             onActiveChange = { isActive -> active = isActive },
@@ -66,7 +66,6 @@ fun SearchBarComponent(
             },
             trailingIcon = {
                 Row {
-                    // Show Notification Icon only if the role is not Guest
                     if (role != UserRole.Guest) {
                         IconButton(onClick = onNotificationClick) {
                             Icon(
@@ -80,7 +79,7 @@ fun SearchBarComponent(
                         IconButton(onClick = {
                             onQueryChange("")
                             active = false
-                            jobViewModel.searchJobs("") // Reset search results
+                            jobViewModel.searchJobs("")
                         }) {
                             Icon(imageVector = Icons.Filled.Close, contentDescription = "Clear")
                         }
