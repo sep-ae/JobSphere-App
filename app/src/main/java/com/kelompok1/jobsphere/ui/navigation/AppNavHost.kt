@@ -35,6 +35,8 @@ import com.kelompok1.jobsphere.ui.jobseeker.JobDetailView
 import com.kelompok1.jobsphere.ui.jobseeker.JobSeekerProgress
 import com.kelompok1.jobsphere.ui.jobseeker.JobseekerNotification
 import com.kelompok1.jobsphere.ui.screen.ExploreJob
+import com.kelompok1.jobsphere.ui.screen.GuestJobCategoryView
+import com.kelompok1.jobsphere.ui.screen.GuestJobDetailView
 import com.kelompok1.jobsphere.ui.screen.GuestPage
 import com.kelompok1.jobsphere.ui.screen.LandingScreen
 import com.kelompok1.jobsphere.ui.screen.LoginPage
@@ -94,10 +96,33 @@ fun AppNavHost(
                 navController = navController
             )
         }
-        composable(Screen.JobseekerNotification.route) {
-            JobseekerNotification(
+        composable(Screen.GuestJobDetailView.route) { backStackEntry ->
+            val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
+            val jobsState by jobViewModel.jobs.collectAsState()
+            val isGuest by userViewModel.isGuest.collectAsState(initial = false)
+
+            val job = jobsState.find { it.id == jobId }
+            if (job != null) {
+                GuestJobDetailView(
+                    job = job,
+                    navController = navController,
+                    applicationViewModel = applicationViewModel,
+                    userViewModel = userViewModel
+                )
+            } else {
+                Text(
+                    text = "Job not found!"
+                )
+            }
+        }
+        composable(
+            route = "jobcategoryguest/{category}",
+            arguments = listOf(navArgument("category") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category") ?: "General"
+            GuestJobCategoryView(
                 navController = navController,
-                applicationViewModel = applicationViewModel,
+                category = category,
                 jobViewModel = jobViewModel
             )
         }
@@ -146,7 +171,7 @@ fun AppNavHost(
         composable(Screen.JobDetailView.route) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getString("jobId") ?: ""
             val jobsState by jobViewModel.jobs.collectAsState()
-            val isGuest by userViewModel.isGuest.collectAsState(initial = false) // Mendapatkan status `isGuest` dari userViewModel
+            val isGuest by userViewModel.isGuest.collectAsState(initial = false)
 
             val job = jobsState.find { it.id == jobId }
             if (job != null) {
@@ -173,6 +198,13 @@ fun AppNavHost(
             )
         }
 
+        composable(Screen.JobseekerNotification.route) {
+            JobseekerNotification(
+                navController = navController,
+                applicationViewModel = applicationViewModel,
+                jobViewModel = jobViewModel
+            )
+        }
 
 
         // Routing Company

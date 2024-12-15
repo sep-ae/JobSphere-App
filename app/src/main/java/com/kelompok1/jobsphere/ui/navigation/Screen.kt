@@ -8,6 +8,12 @@ sealed class Screen(val route: String) {
     object SettingsScreen : Screen("SettingsScreen")
     object ExploreJob : Screen("ExploreJob")
     object GuestPage : Screen("GuestPage")
+    object GuestJobDetailView : Screen("GuestJobDetailView/{jobId}") {
+        fun createRoute(jobId: String) = "GuestJobDetailView/$jobId"
+    }
+    object GuestJobCategoryView : Screen("GuestjobCategoryView/{category}") {
+        fun createRoute(category: String) = "GuestjobCategoryView/$category"
+    }
 
     // Object JobSeeker
     object JobSeekerHomePage : Screen("jobSeekerHomePage/{username}") {

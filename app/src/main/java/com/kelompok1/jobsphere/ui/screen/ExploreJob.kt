@@ -3,24 +3,17 @@ package com.kelompok1.jobsphere.ui.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserRole
-import com.kelompok1.jobsphere.ui.components.LazyColumnAllJob
 import com.kelompok1.jobsphere.ui.components.LazyRowCategory
 import com.kelompok1.jobsphere.ui.components.SearchBarComponent
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.filled.Person
 
 @Composable
 fun ExploreJob(
@@ -39,18 +32,7 @@ fun ExploreJob(
     }
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("GuestPage")
-                },
-                backgroundColor = Color(0xFF134B70),
-                contentColor = Color.White,
-                shape = RoundedCornerShape(50)
-            ) {
-                Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile")
-            }
-        }
+        // Removed FloatingActionButton
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -75,7 +57,7 @@ fun ExploreJob(
 
             // Job Categories
             LazyRowCategory { category ->
-                navController.navigate("job_category/$category")
+                navController.navigate("jobcategoryguest/$category")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -94,7 +76,7 @@ fun ExploreJob(
                 Text("No jobs available", modifier = Modifier.padding(16.dp))
                 Log.d("ExploreJob", "No jobs available")
             } else {
-                LazyColumnAllJob(
+                LazyColumnGuest(
                     context = LocalContext.current,
                     jobs = jobs,
                     navController = navController
