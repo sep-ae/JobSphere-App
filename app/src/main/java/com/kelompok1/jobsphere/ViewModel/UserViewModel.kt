@@ -23,7 +23,7 @@ class UserViewModel : ViewModel() {
         checkUserStatus()
     }
 
-    // Mengecek apakah user sedang login atau guest
+
     private fun checkUserStatus() {
         val userId = firebaseAuth.currentUser?.uid
         if (userId == null) {
