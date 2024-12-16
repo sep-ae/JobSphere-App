@@ -78,6 +78,7 @@ fun JobSeekerHomePage(
     val filteredJobsState by jobViewModel.filteredJobs.collectAsState()
 
     val jobs = if (searchQuery.isNotEmpty()) filteredJobsState else jobsState
+    var username by remember { mutableStateOf("Loading...") }
 
     Log.d("JobSeekerHomePage", "Jobs state in UI: $jobsState")
 
@@ -97,6 +98,8 @@ fun JobSeekerHomePage(
         drawerState = CustomDrawerState.Closed
     }
 
+    val userId = userViewModel.getCurrentUserId() ?: ""
+
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -105,7 +108,7 @@ fun JobSeekerHomePage(
             .fillMaxSize()
     ) {
         CustomDrawer(
-            username = username,
+            userId = userId,
             selectedNavigationItem = selectedNavigationItem,
             onNavigationItemClick = { navigationItem ->
                 when (navigationItem) {
@@ -119,7 +122,8 @@ fun JobSeekerHomePage(
                 }
                 drawerState = CustomDrawerState.Closed
             },
-            onCloseClick = { drawerState = CustomDrawerState.Closed }
+            onCloseClick = { drawerState = CustomDrawerState.Closed },
+            userViewModel = userViewModel
         )
         MainContent(
             modifier = Modifier
@@ -146,6 +150,7 @@ fun JobSeekerHomePage(
         )
     }
 }
+
 
 @Composable
 fun MainContent(
@@ -246,7 +251,7 @@ fun MainContent(
                         Log.d("MainContent", "No jobs available")
                     } else {
                         Log.d("MainContent", "Displaying ${jobs.size} jobs")
-                        LazyColumnAllJob(context = context, jobs = jobs, navController = navController)
+                        LazyColumnAllJob(context = context, jobs = jobs, navController = navController, userViewModel = UserViewModel())
                     }
                 }
             }

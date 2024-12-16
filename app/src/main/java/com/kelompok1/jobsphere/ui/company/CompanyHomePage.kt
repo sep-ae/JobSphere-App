@@ -79,8 +79,10 @@ fun CompanyHomePage(
     val filteredJobsState by jobViewModel.filteredJobs.collectAsState()
 
     val jobs = if (searchQuery.isNotEmpty()) filteredJobsState else jobsState
+    var username by remember { mutableStateOf("Loading...") }
 
     Log.d("CompanyHomePage", "Jobs state in UI: $jobsState")
+    val userId = userViewModel.getCurrentUserId() ?: ""
 
     if (jobs.isEmpty() && searchQuery.isEmpty()) {
         jobViewModel.fetchJobs(UserRole.Company)
@@ -106,7 +108,7 @@ fun CompanyHomePage(
             .fillMaxSize()
     ) {
         CustomDrawer(
-            username = username,
+            userId = userId,
             selectedNavigationItem = selectedNavigationItem,
             onNavigationItemClick = { navigationItem ->
                 when (navigationItem) {
@@ -119,7 +121,8 @@ fun CompanyHomePage(
                 }
                 drawerState = CustomDrawerState.Closed
             },
-            onCloseClick = { drawerState = CustomDrawerState.Closed }
+            onCloseClick = { drawerState = CustomDrawerState.Closed },
+            userViewModel = userViewModel
         )
         MainContent(
             modifier = Modifier

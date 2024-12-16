@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,18 +50,19 @@ import androidx.navigation.NavController
 import com.kelompok1.jobsphere.R
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.ResultState
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.ui.navigation.Screen
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.text.DecimalFormat
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuestJobCategoryView(
     category: String,
     navController: NavController,
-    jobViewModel: JobViewModel
+    jobViewModel: JobViewModel,
+    userViewModel: UserViewModel
 ) {
     val jobState by jobViewModel.jobState.collectAsState()
     val filteredJobs by jobViewModel.filteredJobs.collectAsState()
@@ -119,7 +124,7 @@ fun GuestJobCategoryView(
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(filteredJobs) { job ->
-                                JobItem(job = job, navController = navController)
+                                JobItem(job = job, navController = navController, userViewModel = userViewModel)
                             }
                         }
                     }
@@ -146,25 +151,33 @@ fun GuestJobCategoryView(
     }
 }
 
+
 @Composable
 fun JobItem(
     job: Job,
-    navController: NavController
+    navController: NavController,
+    userViewModel: UserViewModel
 ) {
+    var username by remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(job.userId) {
+        username = userViewModel.fetchUsernameById(job.userId) ?: "Unknown Company"
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .height(140.dp)
             .clickable {
                 navController.navigate(Screen.GuestJobDetailView.createRoute(job.id))
-            }
-            .padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = RoundedCornerShape(12.dp)
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -179,48 +192,105 @@ fun JobItem(
             )
 
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 12.dp)
+                    .padding(start = 8.dp)
             ) {
+                // Job title
                 Text(
                     text = job.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Text(
-                    text = "Type: ${job.jobType}",
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    fontWeight = FontWeight.Bold
                 )
 
-                Text(
-                    text = "Deadline: ${formatJobDate(job.deadline)}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // Company username
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.office),
+                        contentDescription = "Office Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = username,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Job Type Icon",
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
+                        )
+                        Text(
+                            text = job.jobType,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
 
-                // Display salary
-                Text(
-                    text = "Salary: ${job.salary}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Salary
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.money),
+                            contentDescription = "Salary Icon",
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
+                        )
+                        Text(
+                            text = formatCurrency(job.salary),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                // Location
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.location),
+                        contentDescription = "Location Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = job.location,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                // Education
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.education),
+                        contentDescription = "Education Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = job.minEducation,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
             }
         }
     }
-}
-
-fun formatJobDate(dateMillis: Long?): String {
-    if (dateMillis == null) return "N/A"
-    val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale("id", "ID"))
-    return dateFormat.format(Date(dateMillis))
 }

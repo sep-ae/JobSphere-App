@@ -50,6 +50,16 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    suspend fun fetchUsernameById(userId: String): String? {
+        return try {
+            val userDoc = firestore.collection("users").document(userId).get().await()
+            userDoc.getString("username") // Ambil field "username" dari dokumen
+        } catch (e: Exception) {
+            null // Kembalikan null jika gagal mengambil data
+        }
+    }
+
+
     // Mendapatkan ID user saat ini
     fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid

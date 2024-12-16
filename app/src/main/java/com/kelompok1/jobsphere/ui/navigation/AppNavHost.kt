@@ -123,7 +123,8 @@ fun AppNavHost(
             GuestJobCategoryView(
                 navController = navController,
                 category = category,
-                jobViewModel = jobViewModel
+                jobViewModel = jobViewModel,
+                userViewModel = userViewModel
             )
         }
 
@@ -164,7 +165,8 @@ fun AppNavHost(
             JobCategoryView(
                 navController = navController,
                 category = category,
-                jobViewModel = jobViewModel
+                jobViewModel = jobViewModel,
+                userViewModel = userViewModel
             )
         }
 

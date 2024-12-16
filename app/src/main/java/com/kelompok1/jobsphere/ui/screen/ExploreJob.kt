@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserRole
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.components.LazyRowCategory
 import com.kelompok1.jobsphere.ui.components.SearchBarComponent
 
@@ -60,7 +61,7 @@ fun ExploreJob(
                 navController.navigate("jobcategoryguest/$category")
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             // Job List Header
             Text(
@@ -69,17 +70,18 @@ fun ExploreJob(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Job List
             if (jobs.isEmpty()) {
                 Text("No jobs available", modifier = Modifier.padding(16.dp))
                 Log.d("ExploreJob", "No jobs available")
             } else {
-                LazyColumnGuest(
+                JobListScreen(
                     context = LocalContext.current,
                     jobs = jobs,
-                    navController = navController
+                    navController = navController,
+                    userViewModel = UserViewModel()
                 )
             }
         }

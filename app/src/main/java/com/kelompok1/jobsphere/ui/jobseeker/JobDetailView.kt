@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,11 @@ fun JobDetailView(
 ) {
     var isDialogOpen by remember { mutableStateOf(false) }
     val hasApplied = applicationViewModel.hasApplied(job.id)
+    var username by remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(job.userId) {
+        username = userViewModel.fetchUsernameById(job.userId) ?: "Unknown Company"
+    }
 
     Scaffold(
         topBar = {
@@ -123,7 +129,7 @@ fun JobDetailView(
                             )
                         )
                         Text(
-                            text = "Company Name",
+                            text = username,
                             fontSize = 16.sp,
                             color = Color.Black,
                             style = androidx.compose.ui.text.TextStyle(

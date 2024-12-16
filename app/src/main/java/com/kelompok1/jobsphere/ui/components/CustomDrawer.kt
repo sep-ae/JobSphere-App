@@ -17,6 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,16 +30,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kelompok1.jobsphere.R
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
+import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.data.model.NavigationItem
 
 
 @Composable
 fun CustomDrawer(
-    username:String,
+    userId: String,
     selectedNavigationItem: NavigationItem,
     onNavigationItemClick: (NavigationItem) -> Unit,
-    onCloseClick: () -> Unit
+    onCloseClick: () -> Unit,
+    userViewModel: UserViewModel
 ) {
+    var username by remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(userId) {
+        username = userViewModel.fetchUsernameById(userId) ?: "Unknown Company"
+    }
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -59,7 +72,7 @@ fun CustomDrawer(
         Spacer(modifier = Modifier.height(24.dp))
         Image(
             modifier = Modifier.size(100.dp),
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.userpp),
             contentDescription = "Image Profile"
         )
         Spacer(modifier = Modifier.height(20.dp))
