@@ -92,6 +92,8 @@ fun NotificationItem(notification: Application, jobTitle: String) {
 
     val formattedDate = convertTimestampToDate(notification.appliedAt)
 
+    Spacer(modifier = Modifier.height(6.dp))
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
