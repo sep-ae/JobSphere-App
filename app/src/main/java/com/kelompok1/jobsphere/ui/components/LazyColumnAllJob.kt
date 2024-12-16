@@ -21,16 +21,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.R
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.data.model.Job
 import com.kelompok1.jobsphere.ui.navigation.Screen
-import java.text.SimpleDateFormat
-import java.util.*
+import com.kelompok1.jobsphere.ui.screen.DropdownFilter
+import com.kelompok1.jobsphere.ui.screen.formatCurrency
+import com.kelompok1.jobsphere.ui.screen.isSalaryInRange
+
 
 @Composable
 fun LazyColumnAllJob(
     context: Context,
     jobs: List<Job>,
-    navController: NavController
+    navController: NavController,
+    userViewModel: UserViewModel
 ) {
     var selectedJobType by remember { mutableStateOf("All") }
     var selectedLocation by remember { mutableStateOf("All") }
@@ -99,61 +103,24 @@ fun LazyColumnAllJob(
             contentPadding = PaddingValues(8.dp)
         ) {
             items(filteredJobs) { job ->
-                JobCard(job = job, navController = navController)
+                JobCard(job = job, navController = navController, userViewModel = userViewModel)
             }
         }
     }
 }
 
-fun isSalaryInRange(salary: Double, selectedSalary: String): Boolean {
-    return when (selectedSalary) {
-        "0-3 juta" -> salary <= 3000000
-        "3-6 juta" -> salary in 3000000.0..6000000.0
-        "6-10 juta" -> salary in 6000000.0..10000000.0
-        ">10 juta" -> salary > 10000000
-        else -> true
-    }
-}
-
 @Composable
-fun DropdownFilter(
-    label: String,
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
+fun JobCard(
+    job: Job,
+    navController: NavController,
+    userViewModel: UserViewModel
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var username by remember { mutableStateOf("Loading...") }
 
-    Box(modifier = Modifier.wrapContentSize()) {
-        OutlinedButton(
-            onClick = { expanded = true },
-            modifier = Modifier.height(36.dp)
-        ) {
-            Text(
-                text = "$label: $selectedOption",
-                fontSize = 12.sp
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded = false
-                    },
-                    text = { Text(text = option, fontSize = 12.sp) }
-                )
-            }
-        }
+    LaunchedEffect(job.userId) {
+        username = userViewModel.fetchUsernameById(job.userId) ?: "Unknown Company"
     }
-}
 
-@Composable
-fun JobCard(job: Job, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -182,34 +149,103 @@ fun JobCard(job: Job, navController: NavController) {
             )
 
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(start = 8.dp)
             ) {
+                // Job title
                 Text(
                     text = job.title,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-                Text(
-                    text = "Type: ${job.jobType}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                // Company username
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.office),
+                        contentDescription = "Office Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = username,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
 
-                Text(
-                    text = "Education: ${job.minEducation}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Job Type Icon",
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
+                        )
+                        Text(
+                            text = job.jobType,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
 
-                Text(
-                    text = "Salary: ${job.salary}",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Salary
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.money),
+                            contentDescription = "Salary Icon",
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
+                        )
+                        Text(
+                            text = formatCurrency(job.salary),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                // Location
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.location),
+                        contentDescription = "Location Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = job.location,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                // Education
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.education),
+                        contentDescription = "Education Icon",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = job.minEducation,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
     }

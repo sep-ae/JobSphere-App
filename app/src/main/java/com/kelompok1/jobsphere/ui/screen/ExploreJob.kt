@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.ViewModel.UserRole
+import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.ui.components.LazyRowCategory
 import com.kelompok1.jobsphere.ui.components.SearchBarComponent
 
@@ -79,7 +80,8 @@ fun ExploreJob(
                 JobListScreen(
                     context = LocalContext.current,
                     jobs = jobs,
-                    navController = navController
+                    navController = navController,
+                    userViewModel = UserViewModel()
                 )
             }
         }
