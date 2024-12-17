@@ -249,7 +249,7 @@ fun JobDetailView(
                 text = { Text(text = "Are you sure you want to apply for this job?") },
                 confirmButton = {
                     TextButton(onClick = {
-                        applicationViewModel.submitApplication(job.id, "Default Cover Letter")
+                        applicationViewModel.submitApplication(job.id)
                         isDialogOpen = false
                     }) {
                         Text(text = "Yes")

@@ -12,9 +12,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.kelompok1.jobsphere.R
 import com.kelompok1.jobsphere.ViewModel.ApplicationViewModel
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
 import com.kelompok1.jobsphere.data.model.Application
@@ -42,11 +44,7 @@ fun JobseekerNotification(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Your Application Notifications",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            Spacer(modifier = Modifier.height(70.dp))
 
             if (notifications.isEmpty()) {
                 Text(text = "No new notifications.")
@@ -100,27 +98,40 @@ fun NotificationItem(notification: Application, jobTitle: String) {
             .padding(vertical = 8.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = jobTitle,
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+
+            Icon(
+                painter = painterResource(id = R.drawable.megaphone),
+                contentDescription = "Notification Icon",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(end = 16.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Status: ${notification.status}",
-                style = MaterialTheme.typography.bodySmall,
-                color = statusColor
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Applied at: $formattedDate",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = jobTitle,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = "Status: ${notification.status}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = statusColor
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Applied at: $formattedDate",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
