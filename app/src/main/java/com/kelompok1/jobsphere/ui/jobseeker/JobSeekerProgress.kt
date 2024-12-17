@@ -123,7 +123,6 @@ fun JobProgressCard(application: Application, job: Job?) {
             // Progress Status Section
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatusRow("Pending", application.status == "Pending", Color.Gray)
-                StatusRow("In Progress", application.status == "In Progress", Color.Blue)
 
                 // Accepted or Rejected Row
                 val isAccepted = application.status == "Accepted"
