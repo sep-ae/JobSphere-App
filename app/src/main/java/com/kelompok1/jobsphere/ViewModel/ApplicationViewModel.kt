@@ -29,10 +29,12 @@ class ApplicationViewModel : ViewModel() {
     private val _applications = MutableStateFlow<List<Application>>(emptyList())
     val applications: StateFlow<List<Application>> = _applications
 
-    private val _notifications = MutableStateFlow<List<Application>>(emptyList()) // Notifications state
+    private val _notifications = MutableStateFlow<List<Application>>(emptyList())
     val notifications: StateFlow<List<Application>> = _notifications
 
-    // Fungsi di ApplicationViewModel untuk mengambil aplikasi berdasarkan userId
+    private val _companyUsernames = MutableStateFlow<Map<String, String>>(emptyMap())
+    val companyUsernames: StateFlow<Map<String, String>> = _companyUsernames
+
     fun fetchApplicationsByUser() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -41,7 +43,6 @@ class ApplicationViewModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            _applications.value = emptyList() // Atur ulang daftar aplikasi sebelum memuat data baru.
             try {
                 val snapshot = firestore.collection("applications")
                     .whereEqualTo("userId", userId)
@@ -51,7 +52,10 @@ class ApplicationViewModel : ViewModel() {
                     document.toObject(Application::class.java)?.copy(id = document.id)
                 }
                 _applications.value = applicationList
-                // Check for status updates and notify the UI
+
+                val jobIds = applicationList.mapNotNull { it.jobId }
+                fetchCompanyUsernamesFromJobs(jobIds)
+
                 checkForNotifications(applicationList)
             } catch (e: Exception) {
                 Log.e("ApplicationViewModel", "Error fetching applications: ${e.message}")
@@ -59,7 +63,29 @@ class ApplicationViewModel : ViewModel() {
         }
     }
 
-    // Function to check for status updates and push to notifications
+    private suspend fun fetchCompanyUsernamesFromJobs(jobIds: List<String>) {
+        try {
+            val usernameMap = mutableMapOf<String, String>()
+
+            for (jobId in jobIds.distinct()) {
+                val jobDocument = firestore.collection("jobs").document(jobId).get().await()
+                val companyId = jobDocument.getString("userId")
+
+                if (!companyId.isNullOrEmpty()) {
+                    val userDocument = firestore.collection("users").document(companyId).get().await()
+                    val username = userDocument.getString("username") ?: "Unknown Company"
+                    usernameMap[companyId] = username
+                }
+            }
+
+            _companyUsernames.value = usernameMap
+        } catch (e: Exception) {
+            Log.e("ApplicationViewModel", "Error fetching company usernames: ${e.message}")
+        }
+    }
+
+
+    // Function to check for notifications (Accepted/Rejected statuses)
     private fun checkForNotifications(applications: List<Application>) {
         val newNotifications = applications.filter { application ->
             application.status == "Accepted" || application.status == "Rejected"
@@ -69,23 +95,18 @@ class ApplicationViewModel : ViewModel() {
         }
     }
 
-    // Fungsi untuk mengirim aplikasi ke Firestore
-    fun submitApplication(jobId: String, coverLetter: String) {
+    // Submit an application to Firestore
+    fun submitApplication(jobId: String) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
             _applicationState.value = ApplicationResultState.Failure("User not authenticated!")
             return
         }
 
-        if (coverLetter.isBlank()) {
-            _applicationState.value = ApplicationResultState.Failure("Cover letter cannot be empty!")
-            return
-        }
 
         val application = Application(
             userId = userId,
             jobId = jobId,
-            coverLetter = coverLetter,
             appliedAt = System.currentTimeMillis(),
             status = "Pending"
         )
@@ -93,9 +114,9 @@ class ApplicationViewModel : ViewModel() {
         viewModelScope.launch {
             _applicationState.value = ApplicationResultState.Loading
             try {
-                val applicationRef = firestore.collection("applications").add(application).await()
-                _applicationState.value = ApplicationResultState.Success(_applications.value) // Returning the list of applications after submission
-                fetchApplicationsByUser() // Refresh application list after success
+                firestore.collection("applications").add(application).await()
+                _applicationState.value = ApplicationResultState.Success(_applications.value)
+                fetchApplicationsByUser()
             } catch (e: Exception) {
                 _applicationState.value = ApplicationResultState.Failure("Failed to submit application: ${e.message ?: "Unknown error"}")
             }
@@ -106,7 +127,6 @@ class ApplicationViewModel : ViewModel() {
         return _applications.value.any { it.jobId == jobId }
     }
 
-    // Listen for application status updates in Firestore (from Company)
     fun listenForStatusUpdates() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -125,13 +145,12 @@ class ApplicationViewModel : ViewModel() {
                     val updatedApplications = it.documents.mapNotNull { document ->
                         document.toObject(Application::class.java)?.copy(id = document.id)
                     }
-                    // Check for new status updates
                     checkForNotifications(updatedApplications)
                 }
             }
     }
 
-    // Reset state aplikasi
+    // Reset application state
     fun resetApplicationState() {
         _applicationState.value = ApplicationResultState.Idle
     }
