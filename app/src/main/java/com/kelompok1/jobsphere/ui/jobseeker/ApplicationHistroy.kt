@@ -6,18 +6,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kelompok1.jobsphere.R
 import com.kelompok1.jobsphere.ViewModel.ApplicationViewModel
 import com.kelompok1.jobsphere.ViewModel.JobViewModel
+import com.kelompok1.jobsphere.ViewModel.UserRole
 import com.kelompok1.jobsphere.ViewModel.UserViewModel
 import com.kelompok1.jobsphere.data.model.Application
 import com.kelompok1.jobsphere.data.model.Job
@@ -37,6 +46,7 @@ fun ApplicationHistory(
 
     LaunchedEffect(Unit) {
         applicationViewModel.fetchApplicationsByUser()
+        jobViewModel.fetchJobs(UserRole.JobSeeker)
     }
 
     Scaffold(
@@ -77,12 +87,12 @@ fun ApplicationHistory(
                     }
                 } else {
                     LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(applications) { application ->
                             val job = jobViewModel.jobs.collectAsState().value
                                 .find { it.id == application.jobId }
-                            ApplicationHistoryCard(application, job)
+                            ApplicationHistoryCard(application, job, userViewModel)
                         }
                     }
                 }
@@ -92,11 +102,22 @@ fun ApplicationHistory(
 }
 
 @Composable
-fun ApplicationHistoryCard(application: Application, job: Job?) {
+fun ApplicationHistoryCard(application: Application, job: Job?, userViewModel: UserViewModel) {
+    var username by remember { mutableStateOf("Loading...") }
+
+    LaunchedEffect(job?.userId) {
+        if (job?.userId != null) {
+            username = userViewModel.fetchUsernameById(job.userId) ?: "Unknown Company"
+        } else {
+            username = "Unknown Company"
+        }
+    }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .shadow(8.dp, MaterialTheme.shapes.medium),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -105,25 +126,53 @@ fun ApplicationHistoryCard(application: Application, job: Job?) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            // Job Title
             Text(
                 text = job?.title ?: "Job Title Unknown",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = Color.Black,
+                modifier = Modifier.padding(bottom = 4.dp)
             )
-            Text(
-                text = "Company Name Unknown",
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(top = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Applied : ${formatTimestamp(application.appliedAt)}",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+
+            // Company Name dengan ikon
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.office),
+                    contentDescription = "Company Icon",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = username,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black,
+                )
+            }
+
+            // Application Date
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Applied Date",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Applied: ${formatTimestamp(application.appliedAt)}",
+                    fontSize = 14.sp,
+                    color = Color.Black.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
